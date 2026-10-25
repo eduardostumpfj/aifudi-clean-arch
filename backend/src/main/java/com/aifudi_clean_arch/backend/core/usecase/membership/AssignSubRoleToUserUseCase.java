@@ -1,4 +1,4 @@
-package com.aifudi_clean_arch.backend.core.usecase.subrole;
+package com.aifudi_clean_arch.backend.core.usecase.membership;
 
 import com.aifudi_clean_arch.backend.core.domain.Membership;
 import com.aifudi_clean_arch.backend.core.exception.ProtectedSubRoleException;

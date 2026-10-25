@@ -7,5 +7,7 @@ import java.util.UUID;
 
 public interface MembershipGateway {
     Optional<Membership> getUserRestaurantMembership(UUID userId, UUID restaurantId);
-    void save(Membership membership);
+    Membership save(Membership membership);
+
+    Optional<Membership> getUserRestaurantMembership(Membership membership);
 }

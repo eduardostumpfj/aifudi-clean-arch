@@ -7,7 +7,7 @@ import java.util.UUID;
 
 
 public interface SubRoleGateway {
-    void save(SubRole subRole);
+    SubRole save(SubRole subRole);
     Optional <SubRole> getById(UUID id);
     Optional <SubRole> getByValue(String value);
     boolean delete(UUID subrole_id);

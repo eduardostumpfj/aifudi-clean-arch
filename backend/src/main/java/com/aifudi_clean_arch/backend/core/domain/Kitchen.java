@@ -10,5 +10,5 @@ import java.util.UUID;
 public class Kitchen {
     private UUID id;
     private String value;
-    private String name;
+    private String label;
 }

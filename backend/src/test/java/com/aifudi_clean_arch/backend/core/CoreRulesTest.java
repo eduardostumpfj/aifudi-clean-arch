@@ -5,6 +5,7 @@ import com.aifudi_clean_arch.backend.core.dto.membership.MembershipInputDto;
 import com.aifudi_clean_arch.backend.core.dto.subRole.*;
 import com.aifudi_clean_arch.backend.core.exception.*;
 import com.aifudi_clean_arch.backend.core.gateway.*;
+import com.aifudi_clean_arch.backend.core.usecase.membership.AssignSubRoleToUserUseCase;
 import com.aifudi_clean_arch.backend.core.usecase.subrole.*;
 import com.aifudi_clean_arch.backend.core.usecase.menuItem.GetMenuItemUseCase;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ class CoreRulesTest {
         var memberships = mock(MembershipGateway.class, withSettings().mockMaker("mock-maker-subclass"));
         var restaurants = mock(RestaurantGateway.class, withSettings().mockMaker("mock-maker-subclass"));
         var users = mock(UserGateway.class, withSettings().mockMaker("mock-maker-subclass"));
-        var user = new User(UUID.randomUUID(), "User", "u@example.com", "hash", "Address", staff);
+        var user = new User(UUID.randomUUID(), "User", "u@example.com", "user", "hash", "Address", staff);
         var restaurant = new Restaurant(UUID.randomUUID(), "Restaurant", "Address", "09:00", new Kitchen(UUID.randomUUID(), "type", "Type"), Set.of(), Set.of());
         when(users.getUserById(user.getId())).thenReturn(Optional.of(user));
         when(restaurants.getRestaurantById(restaurant.getId())).thenReturn(Optional.of(restaurant));
