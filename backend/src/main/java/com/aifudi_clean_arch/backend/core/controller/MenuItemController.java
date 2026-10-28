@@ -18,19 +18,19 @@ public class MenuItemController {
     private final UpdateMenuItemUseCase updateMenuItemUseCase;
     private final GetMenuItemUseCase getMenuItemUseCase;
 
-    public MenuItemOutputDto createMenuItem(CreateMenuItemInputDto createMenuItemInputDto) {
-        return createMenuItemUseCase.createMenuItem(createMenuItemInputDto);
+    public MenuItemOutputDto createMenuItem(UUID authId, CreateMenuItemInputDto createMenuItemInputDto) {
+        return createMenuItemUseCase.createMenuItem(authId, createMenuItemInputDto);
     }
 
-    public MenuItemOutputDto updateMenuItem(UpdateMenuItemInputDto updateMenuItemInputDto) {
-        return updateMenuItemUseCase.updateMenuItem(updateMenuItemInputDto);
+    public MenuItemOutputDto updateMenuItem(UUID authId, UpdateMenuItemInputDto updateMenuItemInputDto) {
+        return updateMenuItemUseCase.updateMenuItem(authId, updateMenuItemInputDto);
     }
 
-    public void deleteMenuItem(UUID menuItemId) {
-        deleteMenuItemUseCase.deleteMenuItem(menuItemId);
+    public void deleteMenuItem(UUID authId,UUID menuItemId) {
+        deleteMenuItemUseCase.deleteMenuItem(authId, menuItemId);
     }
 
-    public MenuItemOutputDto getMenuItem(UUID menuItemId) {
-        return getMenuItemUseCase.getMenuItemById(menuItemId);
+    public MenuItemOutputDto getMenuItem(UUID authId, UUID menuItemId) {
+        return getMenuItemUseCase.getMenuItemById(authId,menuItemId);
     }
 }

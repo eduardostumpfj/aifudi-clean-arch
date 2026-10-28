@@ -9,8 +9,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DeleteMenuItemUseCase {
     private final MenuItemGateway menuItemGateway;
+    private final CheckMenuItemPermission checkMenuItemPermission;
 
-    public void deleteMenuItem(UUID menuItemId) {
+    public void deleteMenuItem(UUID authId ,UUID menuItemId) {
+        checkMenuItemPermission.checkDeleteMenuItem(authId, menuItemId);
+
         var isDeleted = menuItemGateway.delete(menuItemId);
         if(!isDeleted){
             throw new MenuItemNotFountException(menuItemId);

@@ -9,8 +9,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DeleteRestaurantUseCase {
     private final RestaurantGateway restaurantGateway;
+    private final CheckRestaurantPermission checkRestaurantPermission;
 
-    public void deleteRestaurant(UUID restaurantId) {
+    public void deleteRestaurant(UUID authUserId,UUID restaurantId) {
+        checkRestaurantPermission.checkDeleteRestaurant(authUserId, restaurantId);
+
        var isDeleted = restaurantGateway.delete(restaurantId);
        if(!isDeleted){
            throw new RestaurantNotFoundException(restaurantId);

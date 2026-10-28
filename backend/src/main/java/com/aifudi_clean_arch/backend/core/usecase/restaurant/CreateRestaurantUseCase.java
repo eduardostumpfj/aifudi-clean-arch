@@ -21,8 +21,11 @@ public class CreateRestaurantUseCase {
     private final KitchenGateway kitchenGateway;
     private final MembershipGateway membershipGateway;
     private final TransactionGateway transactionGateway;
+    private final CheckRestaurantPermission checkRestaurantPermission;
 
-    public CreateRestaurantOutputDto createRestaurant(CreateRestaurantInputDto inputDto) {
+    public CreateRestaurantOutputDto createRestaurant(UUID authUserId,CreateRestaurantInputDto inputDto) {
+        checkRestaurantPermission.checkCreateRestaurant(authUserId);
+
         var foundUser = userGateway.getUserById(inputDto.ownerId())
                 .orElseThrow(() -> new UserNotFoundException(inputDto.ownerId()));
 

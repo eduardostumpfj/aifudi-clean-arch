@@ -29,4 +29,13 @@ public class UserJpaGateway implements UserGateway {
         }
     }
 
+    @Override
+    public Optional<User> getUserByLogin(String login) {
+        try {
+            return repository.findByLogin(login).map(mapper::map);
+        } catch (DataAccessException ex) {
+            throw new ErrorOnRepositoryAccess("Error retrieving User: " + login, ex);
+        }
+    }
+
 }

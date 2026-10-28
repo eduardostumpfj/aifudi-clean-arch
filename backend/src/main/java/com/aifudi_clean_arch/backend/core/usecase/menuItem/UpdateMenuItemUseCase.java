@@ -7,6 +7,7 @@ import com.aifudi_clean_arch.backend.core.exception.MenuItemNotFountException;
 import com.aifudi_clean_arch.backend.core.exception.RestaurantNotFoundException;
 import com.aifudi_clean_arch.backend.core.gateway.MenuItemGateway;
 import com.aifudi_clean_arch.backend.core.gateway.RestaurantGateway;
+import com.aifudi_clean_arch.backend.core.usecase.subrole.CheckSubRolePermission;
 import lombok.AllArgsConstructor;
 
 import java.util.UUID;
@@ -15,8 +16,11 @@ import java.util.UUID;
 public class UpdateMenuItemUseCase {
     private final RestaurantGateway  restaurantGateway;
     private final MenuItemGateway menuItemGateway;
+    private final CheckMenuItemPermission permission;
 
-    public MenuItemOutputDto updateMenuItem(UpdateMenuItemInputDto inputDto) {
+    public MenuItemOutputDto updateMenuItem(UUID authId,UpdateMenuItemInputDto inputDto) {
+        permission.checkUpdateMenuItem(authId, inputDto.id());
+
         var current = menuItemGateway.getById(inputDto.id())
                 .orElseThrow(() -> new MenuItemNotFountException(inputDto.id()));
 

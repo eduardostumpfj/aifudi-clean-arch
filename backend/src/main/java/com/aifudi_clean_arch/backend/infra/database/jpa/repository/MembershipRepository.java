@@ -1,6 +1,7 @@
 package com.aifudi_clean_arch.backend.infra.database.jpa.repository;
 
 import com.aifudi_clean_arch.backend.infra.database.jpa.entity.MembershipEntity;
+import com.aifudi_clean_arch.backend.infra.database.mapper.MembershipMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -15,4 +16,6 @@ public interface MembershipRepository extends JpaRepository<MembershipEntity, UU
     );
 
     List<MembershipEntity> findByRestaurant_Id(UUID restaurantId);
+
+    Optional<MembershipEntity> findByUser_Id(UUID userId);
 }

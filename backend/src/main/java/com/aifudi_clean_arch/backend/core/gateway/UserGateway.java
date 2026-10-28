@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface UserGateway {
     Optional<User> getUserById(UUID userId);
+    Optional<User> getUserByLogin(String login);
 }

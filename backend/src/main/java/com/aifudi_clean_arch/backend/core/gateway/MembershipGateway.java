@@ -8,6 +8,6 @@ import java.util.UUID;
 public interface MembershipGateway {
     Optional<Membership> getUserRestaurantMembership(UUID userId, UUID restaurantId);
     Membership save(Membership membership);
-
+    Optional<Membership> getUserMembership(UUID userId);
     Optional<Membership> getUserRestaurantMembership(Membership membership);
 }

@@ -14,8 +14,11 @@ import java.util.UUID;
 public class CreateMenuItemUseCase {
     private final RestaurantGateway  restaurantGateway;
     private final MenuItemGateway menuItemGateway;
+    private final CheckMenuItemPermission checkMenuItemPermission;
 
-    public MenuItemOutputDto createMenuItem(CreateMenuItemInputDto inputDto){
+    public MenuItemOutputDto createMenuItem(UUID authUserId, CreateMenuItemInputDto inputDto){
+        checkMenuItemPermission.checkCreateMenuItem(authUserId, inputDto.restaurantId());
+
         var foundRestaurant = restaurantGateway.getRestaurantById(inputDto.restaurantId())
                 .orElseThrow(() -> new RestaurantNotFoundException(inputDto.restaurantId()));
 

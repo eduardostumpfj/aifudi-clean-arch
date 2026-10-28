@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.SimpleTransactionStatus;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -12,7 +13,7 @@ class TransactionJpaGatewayTest {
     private final PlatformTransactionManager manager = mock(PlatformTransactionManager.class,
             withSettings().mockMaker("mock-maker-subclass"));
     private final SimpleTransactionStatus status = new SimpleTransactionStatus();
-    private final TransactionJpaGateway gateway = new TransactionJpaGateway(manager);
+    private final TransactionJpaGateway gateway = new TransactionJpaGateway(new TransactionTemplate(manager));
 
     @Test
     void commitsAndReturnsOperationResult() {

@@ -9,13 +9,16 @@ import com.aifudi_clean_arch.backend.core.exception.SubRoleNotFoundException;
 import com.aifudi_clean_arch.backend.core.gateway.RoleGateway;
 import com.aifudi_clean_arch.backend.core.gateway.SubRoleGateway;
 import lombok.AllArgsConstructor;
+import java.util.UUID;
 
 @AllArgsConstructor
 public class UpdateSubRoleUseCase {
     private final RoleGateway roleGateway;
     private final SubRoleGateway subRoleGateway;
+    private final CheckSubRolePermission permission;
 
-    public SubRoleOutputDto update(UpdateSubRoleInputDto inputDto){
+    public SubRoleOutputDto update(UUID authenticatedUserId, UpdateSubRoleInputDto inputDto){
+        permission.checkUpdateSubRole(authenticatedUserId);
         var current = subRoleGateway.getById(inputDto.id())
                 .orElseThrow(() ->
                         new SubRoleNotFoundException(inputDto.id()));

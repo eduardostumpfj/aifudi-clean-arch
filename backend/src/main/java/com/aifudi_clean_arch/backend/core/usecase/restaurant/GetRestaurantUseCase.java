@@ -14,10 +14,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GetRestaurantUseCase {
     private final RestaurantGateway restaurantGateway;
+    private final CheckRestaurantPermission checkRestaurantPermission;
 
-    public GetRestaurantOutputDto getRestaurant(UUID id) {
-        var foundRestaurant = restaurantGateway.getRestaurantById(id)
-                .orElseThrow(() -> new RestaurantNotFoundException(id));
+    public GetRestaurantOutputDto getRestaurant(UUID authUserId, UUID restaurantId) {
+        checkRestaurantPermission.checkGetRestaurant(authUserId);
+
+        var foundRestaurant = restaurantGateway.getRestaurantById(restaurantId)
+                .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
 
         Set<UUID> membersId = foundRestaurant.getMembers().stream()
                 .map(Membership::getId)

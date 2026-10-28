@@ -10,8 +10,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DeleteSubRoleUseCase {
     private final SubRoleGateway subRoleGateway;
+    private final CheckSubRolePermission permission;
 
-    public void deleteSubRole(UUID subrole_id) {
+    public void deleteSubRole(UUID authenticatedUserId, UUID subrole_id) {
+        permission.checkDeleteSubRole(authenticatedUserId);
         var current = subRoleGateway.getById(subrole_id)
                 .orElseThrow(() ->
                         new SubRoleNotFoundException(subrole_id));

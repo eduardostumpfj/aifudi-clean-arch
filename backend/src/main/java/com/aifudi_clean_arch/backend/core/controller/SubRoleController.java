@@ -19,23 +19,23 @@ public class SubRoleController {
     private final GetSubRoleUseCase getSubRoleUseCase;
     private final AssignSubRoleToUserUseCase assignSubRoleToUserUseCase;
 
-    public SubRoleOutputDto createSubRole(CreateSubRoleInputDto inputDto) {
-        return createSubRoleUseCase.createSubRole(inputDto);
+    public SubRoleOutputDto createSubRole(UUID authenticatedUserId, CreateSubRoleInputDto inputDto) {
+        return createSubRoleUseCase.createSubRole(authenticatedUserId, inputDto);
     }
 
-    public SubRoleOutputDto updateSubRole(UpdateSubRoleInputDto inputDto) {
-        return updateSubRoleUseCase.update(inputDto);
+    public SubRoleOutputDto updateSubRole(UUID authenticatedUserId, UpdateSubRoleInputDto inputDto) {
+        return updateSubRoleUseCase.update(authenticatedUserId, inputDto);
     }
 
-    public void deleteSubRole(UUID subRoleId) {
-        deleteSubRoleUseCase.deleteSubRole(subRoleId);
+    public void deleteSubRole(UUID authenticatedUserId, UUID subRoleId) {
+        deleteSubRoleUseCase.deleteSubRole(authenticatedUserId, subRoleId);
     }
 
-    public SubRoleOutputDto getSubRole(UUID subRoleId) {
-        return getSubRoleUseCase.getSubRoleById(subRoleId);
+    public SubRoleOutputDto getSubRole(UUID authenticatedUserId, UUID subRoleId) {
+        return getSubRoleUseCase.getSubRoleById(authenticatedUserId, subRoleId);
     }
 
-    public MembershipOutputDto assignSubRoleToUserUseCase(MembershipInputDto inputDto) {
-        return assignSubRoleToUserUseCase.assignSubRoleToUser(inputDto);
+    public MembershipOutputDto assignSubRoleToUserUseCase(UUID authenticatedUserId, MembershipInputDto inputDto) {
+        return assignSubRoleToUserUseCase.assignSubRoleToUser(authenticatedUserId, inputDto);
     }
 }

@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CoreRulesTest {
+    private final UUID actorId = UUID.randomUUID();
+    private final CheckSubRolePermission permission = mock(CheckSubRolePermission.class, withSettings().mockMaker("mock-maker-subclass"));
     private final SubRoleGateway subRoles = mock(SubRoleGateway.class, withSettings().mockMaker("mock-maker-subclass"));
     private final RoleGateway roles = mock(RoleGateway.class, withSettings().mockMaker("mock-maker-subclass"));
     private final Role owner = new Role(UUID.randomUUID(), "OWNER", "Owner");
@@ -24,8 +26,8 @@ class CoreRulesTest {
     @Test
     void rejectsRenamingAnotherSubRoleToMain() {
         when(subRoles.getById(staff.getId())).thenReturn(Optional.of(staff));
-        var useCase = new UpdateSubRoleUseCase(roles, subRoles);
-        assertThrows(ProtectedSubRoleException.class, () -> useCase.update(
+        var useCase = new UpdateSubRoleUseCase(roles, subRoles, permission);
+        assertThrows(ProtectedSubRoleException.class, () -> useCase.update(actorId,
                 new UpdateSubRoleInputDto(staff.getId(), Optional.of("main"), Optional.empty(), Optional.empty())));
         verify(subRoles, never()).update(any());
     }
@@ -33,19 +35,19 @@ class CoreRulesTest {
     @Test
     void rejectsChangingOrDeletingMain() {
         when(subRoles.getById(main.getId())).thenReturn(Optional.of(main));
-        assertThrows(ProtectedSubRoleException.class, () -> new UpdateSubRoleUseCase(roles, subRoles).update(
+        assertThrows(ProtectedSubRoleException.class, () -> new UpdateSubRoleUseCase(roles, subRoles, permission).update(actorId,
                 new UpdateSubRoleInputDto(main.getId(), Optional.of("other"), Optional.empty(), Optional.empty())));
-        assertThrows(ProtectedSubRoleException.class, () -> new DeleteSubRoleUseCase(subRoles).deleteSubRole(main.getId()));
+        assertThrows(ProtectedSubRoleException.class, () -> new DeleteSubRoleUseCase(subRoles, permission).deleteSubRole(actorId, main.getId()));
         verify(subRoles, never()).delete(any());
     }
 
     @Test
     void reservesMainForAllRolesAndValidatesNullValue() {
         when(roles.getRole(owner.getId())).thenReturn(Optional.of(owner));
-        var useCase = new CreateSubRoleUseCase(roles, subRoles);
-        assertThrows(ProtectedSubRoleException.class, () -> useCase.createSubRole(
+        var useCase = new CreateSubRoleUseCase(roles, subRoles, permission);
+        assertThrows(ProtectedSubRoleException.class, () -> useCase.createSubRole(actorId,
                 new CreateSubRoleInputDto("main", "Main", owner.getId())));
-        assertThrows(IllegalArgumentException.class, () -> useCase.createSubRole(
+        assertThrows(IllegalArgumentException.class, () -> useCase.createSubRole(actorId,
                 new CreateSubRoleInputDto(null, "Label", owner.getId())));
         verify(subRoles, never()).save(any());
     }
@@ -63,9 +65,9 @@ class CoreRulesTest {
         when(subRoles.getById(main.getId())).thenReturn(Optional.of(main));
         when(memberships.getUserRestaurantMembership(user.getId(), restaurant.getId()))
                 .thenReturn(Optional.of(new Membership(UUID.randomUUID(), user, main, restaurant)));
-        var useCase = new AssignSubRoleToUserUseCase(memberships, subRoles, restaurants, users);
-        assertThrows(ProtectedSubRoleException.class, () -> useCase.assignSubRoleToUser(new MembershipInputDto(user.getId(), staff.getId(), restaurant.getId())));
-        assertThrows(ProtectedSubRoleException.class, () -> useCase.assignSubRoleToUser(new MembershipInputDto(user.getId(), main.getId(), restaurant.getId())));
+        var useCase = new AssignSubRoleToUserUseCase(memberships, subRoles, restaurants, users, permission);
+        assertThrows(ProtectedSubRoleException.class, () -> useCase.assignSubRoleToUser(actorId, new MembershipInputDto(user.getId(), staff.getId(), restaurant.getId())));
+        assertThrows(ProtectedSubRoleException.class, () -> useCase.assignSubRoleToUser(actorId, new MembershipInputDto(user.getId(), main.getId(), restaurant.getId())));
         verify(memberships, never()).save(any());
     }
 
@@ -74,9 +76,9 @@ class CoreRulesTest {
         var gateway = mock(MenuItemGateway.class, withSettings().mockMaker("mock-maker-subclass"));
         var item = new MenuItem(UUID.randomUUID(), "Item", "Description", new BigDecimal("19.90"), true, "picture", UUID.randomUUID());
         when(gateway.getById(item.getId())).thenReturn(Optional.of(item));
-        var useCase = new GetMenuItemUseCase(gateway);
-        assertEquals(item.getRestaurantId(), useCase.getMenuItemById(item.getId()).restaurantId());
-        assertThrows(MenuItemNotFountException.class, () -> useCase.getMenuItemById(UUID.randomUUID()));
+        var useCase = new GetMenuItemUseCase(gateway, mock(com.aifudi_clean_arch.backend.core.usecase.menuItem.CheckMenuItemPermission.class, withSettings().mockMaker("mock-maker-subclass")));
+        assertEquals(item.getRestaurantId(), useCase.getMenuItemById(actorId, item.getId()).restaurantId());
+        assertThrows(MenuItemNotFountException.class, () -> useCase.getMenuItemById(actorId, UUID.randomUUID()));
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.aifudi_clean_arch.backend.core.gateway.RestaurantGateway;
 import com.aifudi_clean_arch.backend.core.gateway.SubRoleGateway;
 import com.aifudi_clean_arch.backend.core.gateway.UserGateway;
 import lombok.AllArgsConstructor;
+import com.aifudi_clean_arch.backend.core.usecase.subrole.CheckSubRolePermission;
 
 import java.util.UUID;
 
@@ -21,8 +22,10 @@ public class AssignSubRoleToUserUseCase {
     private final SubRoleGateway subRoleGateway;
     private final RestaurantGateway restaurantGateway;
     private final UserGateway userGateway;
+    private final CheckSubRolePermission permission;
 
-    public MembershipOutputDto assignSubRoleToUser(MembershipInputDto inputDto) {
+    public MembershipOutputDto assignSubRoleToUser(UUID authenticatedUserId, MembershipInputDto inputDto) {
+        permission.checkAssignSubRole(authenticatedUserId);
         var user = userGateway.getUserById(inputDto.userId())
                 .orElseThrow(() -> new UserNotFoundException(inputDto.userId()));
 

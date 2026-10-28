@@ -10,8 +10,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GetSubRoleUseCase {
     private final SubRoleGateway subRoleGateway;
+    private final CheckSubRolePermission permission;
 
-    public SubRoleOutputDto getSubRoleById(UUID id) {
+    public SubRoleOutputDto getSubRoleById(UUID authenticatedUserId, UUID id) {
+        permission.checkGetSubRole(authenticatedUserId);
         var subRole = subRoleGateway.getById(id)
                 .orElseThrow(() -> new SubRoleNotFoundException(id));
 

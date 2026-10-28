@@ -10,8 +10,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GetMenuItemUseCase {
     private final MenuItemGateway menuItemGateway;
+    private final CheckMenuItemPermission checkMenuItemPermission;
 
-    public MenuItemOutputDto getMenuItemById(UUID id) {
+    public MenuItemOutputDto getMenuItemById(UUID authId,UUID id) {
+        checkMenuItemPermission.checkGetMenuItem(authId);
+
         var foundItem = menuItemGateway.getById(id)
                 .orElseThrow(() -> new MenuItemNotFountException(id));
 

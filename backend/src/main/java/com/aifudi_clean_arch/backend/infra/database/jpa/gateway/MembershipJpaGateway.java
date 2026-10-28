@@ -41,6 +41,17 @@ public class MembershipJpaGateway implements MembershipGateway {
     }
 
     @Override
+    public Optional<Membership> getUserMembership(UUID userId) {
+        try {
+            return repository.findByUser_Id(userId)
+                    .map(mapper::map);
+
+        } catch (DataAccessException ex) {
+            throw new ErrorOnRepositoryAccess("Error retrieving Membership", ex);
+        }
+    }
+
+    @Override
     public Optional<Membership> getUserRestaurantMembership(Membership membership) {
         try {
             return repository.findByUser_IdAndRestaurant_Id(

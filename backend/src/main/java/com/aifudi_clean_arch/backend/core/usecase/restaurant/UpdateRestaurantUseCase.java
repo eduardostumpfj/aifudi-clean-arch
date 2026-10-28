@@ -8,13 +8,16 @@ import com.aifudi_clean_arch.backend.core.exception.RestaurantNotFoundException;
 import com.aifudi_clean_arch.backend.core.gateway.KitchenGateway;
 import com.aifudi_clean_arch.backend.core.gateway.RestaurantGateway;
 import lombok.AllArgsConstructor;
+import java.util.UUID;
 
 @AllArgsConstructor
 public class UpdateRestaurantUseCase {
     private final RestaurantGateway restaurantGateway;
     private final KitchenGateway kitchenGateway;
+    private final CheckRestaurantPermission checkRestaurantPermission;
 
-    public UpdateRestaurantOutputDto updateRestaurant(UpdateRestaurantInputDto inputDto) {
+    public UpdateRestaurantOutputDto updateRestaurant(UUID authenticatedUserId, UpdateRestaurantInputDto inputDto) {
+        checkRestaurantPermission.checkUpdateRestaurant(authenticatedUserId, inputDto.id());
         var current = restaurantGateway.getRestaurantById(inputDto.id())
                 .orElseThrow(() -> new RestaurantNotFoundException(inputDto.id()));
 

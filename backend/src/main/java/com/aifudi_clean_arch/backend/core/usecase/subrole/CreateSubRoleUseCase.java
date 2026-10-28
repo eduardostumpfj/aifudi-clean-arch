@@ -15,8 +15,10 @@ import java.util.UUID;
 public class CreateSubRoleUseCase {
     private final RoleGateway roleGateway;
     private final SubRoleGateway subRoleGateway;
+    private final CheckSubRolePermission permission;
 
-    public SubRoleOutputDto createSubRole(CreateSubRoleInputDto inputDto) {
+    public SubRoleOutputDto createSubRole(UUID authenticatedUserId, CreateSubRoleInputDto inputDto) {
+        permission.checkCreateSubRole(authenticatedUserId);
         var foundRole = roleGateway.getRole(inputDto.roleId())
                 .orElseThrow(() -> new RoleNotFoundException(inputDto.roleId()));
 
