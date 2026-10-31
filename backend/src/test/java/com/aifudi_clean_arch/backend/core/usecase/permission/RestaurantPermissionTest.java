@@ -1,4 +1,4 @@
-package com.aifudi_clean_arch.backend.core;
+package com.aifudi_clean_arch.backend.core.usecase.permission;
 
 import com.aifudi_clean_arch.backend.core.domain.*;
 import com.aifudi_clean_arch.backend.core.usecase.permission.RestaurantPermissionChecker;

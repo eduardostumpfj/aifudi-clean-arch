@@ -87,4 +87,45 @@ class RestaurantJpaGatewayTest {
         when(repository.deleteByIdReturningCount(id)).thenThrow(failure);
         assertSame(failure, assertThrows(ErrorOnRepositoryAccess.class, () -> gateway.delete(id)).getCause());
     }
+
+    @Test
+    void saveReturnsGeneratedIdAndPreservesDomainCollections() {
+        var generatedId = UUID.randomUUID();
+        var domain = mapper.map(entity);
+        var pending = new Restaurant(null, domain.getName(), domain.getAddress(), domain.getOpeningTime(),
+                domain.getKitchen(), domain.getMembers(), domain.getMenuItems());
+        when(kitchens.getReferenceById(kitchen.getId())).thenReturn(kitchen);
+        when(repository.save(any())).thenAnswer(i -> {
+            RestaurantEntity saved = i.getArgument(0);
+            assertNull(saved.getId());
+            saved.setId(generatedId);
+            return saved;
+        });
+        var saved = gateway.save(pending);
+        assertAll(() -> assertEquals(generatedId, saved.getId()),
+                () -> assertEquals(pending.getName(), saved.getName()),
+                () -> assertEquals(pending.getAddress(), saved.getAddress()),
+                () -> assertEquals(pending.getOpeningTime(), saved.getOpeningTime()),
+                () -> assertSame(pending.getKitchen(), saved.getKitchen()),
+                () -> assertSame(pending.getMembers(), saved.getMembers()),
+                () -> assertSame(pending.getMenuItems(), saved.getMenuItems()));
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"get", "save", "update"})
+    void wrapsRepositoryFailuresAndPreservesCause(String operation) {
+        var failure = new DataAccessResourceFailureException("offline");
+        when(repository.findById(id)).thenReturn(Optional.of(entity));
+        when(kitchens.getReferenceById(kitchen.getId())).thenReturn(kitchen);
+        when(repository.save(any())).thenThrow(failure);
+        if (operation.equals("get")) when(repository.findById(id)).thenThrow(failure);
+        var error = assertThrows(ErrorOnRepositoryAccess.class, () -> {
+            switch (operation) {
+                case "get" -> gateway.getRestaurantById(id);
+                case "save" -> gateway.save(mapper.map(entity));
+                default -> gateway.update(mapper.map(entity));
+            }
+        });
+        assertSame(failure, error.getCause());
+    }
 }

@@ -20,8 +20,11 @@ import java.util.ArrayList;
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ProblemDetail handleInvalidCredentials(InvalidCredentialsException error, HttpServletRequest request) {
-        return createProblem(HttpStatus.UNAUTHORIZED, "Authentication failed", error.getMessage(), request);
+    public ResponseEntity<ProblemDetail> handleInvalidCredentials(InvalidCredentialsException error, HttpServletRequest request) {
+        var problem = createProblem(HttpStatus.UNAUTHORIZED, "Authentication failed", error.getMessage(), request);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .header(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"aifudi\", charset=\"UTF-8\"")
+                .body(problem);
     }
 
     @ExceptionHandler(NotAllowedException.class)

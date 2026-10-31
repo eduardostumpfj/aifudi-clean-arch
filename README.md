@@ -99,3 +99,43 @@ os vínculos existentes para o mesmo usuário e restaurante.
 `users.client_subrole_id` é obrigatório: identifica o papel global do usuário
 (inclusive ADMIN). Memberships identificam o papel dentro de cada restaurante.
 As permissões voltaram à implementação anterior à separação dos checkers.
+
+## Organização dos testes
+
+Os testes acompanham os pacotes do código de produção em
+`backend/src/test/java/com/aifudi_clean_arch/backend`:
+
+```text
+core/
+  domain/                  # Validações e regras das entidades
+  usecase/                 # Cenários que envolvem mais de um caso de uso
+    menuItem/
+    restaurant/
+    subrole/
+    membership/
+    permission/
+infra/
+  database/jpa/gateway/
+  web/
+    handler/
+    json/
+```
+
+Para executar os testes isolados e gerar uma medição nova, dentro de `backend`:
+
+```sh
+./mvnw clean test '-Dtest=*Test,!BackendApplicationTests'
+```
+
+Esse comando não executa `BackendApplicationTests`, que inicia o contexto Spring.
+O relatório é gerado em `target/site/jacoco/index.html`, sem excluir pacotes de
+produção do cálculo. Não há exigência automática de cobertura mínima configurada.
+Para executar apenas as validações de domínio:
+
+```sh
+./mvnw test '-Dtest=com.aifudi_clean_arch.backend.core.domain.*Test'
+```
+
+`MenuItem.hasPrice()` possui um caminho falso que o construtor não permite
+alcançar: itens com preço nulo ou não positivo são rejeitados na criação. Os
+testes preservam essa regra, sem alterar o estado interno para aumentar a cobertura.

@@ -1,4 +1,4 @@
-package com.aifudi_clean_arch.backend.core;
+package com.aifudi_clean_arch.backend.core.usecase.menuItem;
 
 import com.aifudi_clean_arch.backend.core.usecase.menuItem.GetMenuItemUseCase;
 import com.aifudi_clean_arch.backend.core.usecase.menuItem.CheckMenuItemPermission;

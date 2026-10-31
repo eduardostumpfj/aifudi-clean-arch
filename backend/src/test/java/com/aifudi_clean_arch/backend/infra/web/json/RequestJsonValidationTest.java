@@ -1,4 +1,4 @@
-package com.aifudi_clean_arch.backend.infra.web;
+package com.aifudi_clean_arch.backend.infra.web.json;
 
 import com.aifudi_clean_arch.backend.infra.web.json.*;
 import jakarta.validation.Validation;

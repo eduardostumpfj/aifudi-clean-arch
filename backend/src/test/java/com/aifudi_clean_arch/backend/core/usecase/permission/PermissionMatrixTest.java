@@ -1,7 +1,8 @@
-package com.aifudi_clean_arch.backend.core;
+package com.aifudi_clean_arch.backend.core.usecase.permission;
 
 import com.aifudi_clean_arch.backend.core.domain.*;
 import com.aifudi_clean_arch.backend.core.exception.NotAllowedException;
+import com.aifudi_clean_arch.backend.core.exception.MenuItemNotFountException;
 import com.aifudi_clean_arch.backend.core.gateway.*;
 import com.aifudi_clean_arch.backend.core.usecase.permission.RestaurantPermissionChecker;
 import com.aifudi_clean_arch.backend.core.usecase.restaurant.CheckRestaurantPermission;
@@ -92,5 +93,27 @@ class PermissionMatrixTest {
         assertThrows(NotAllowedException.class, () -> restaurants.checkGetRestaurant(UUID.randomUUID()));
         var unknown = user("OTHER").getId();
         assertThrows(NotAllowedException.class, () -> menu.checkGetMenuItem(unknown));
+    }
+    @Test
+    void rejectsMissingRestaurantBeforeLookingUpMembership() {
+        var owner = user("OWNER");
+
+        assertThrows(NotAllowedException.class,
+                () -> checker.checkManageRestaurant(owner.getId(), null));
+
+        verifyNoInteractions(memberships);
+    }
+
+    @Test
+    void reportsMissingMenuItemBeforeCheckingRestaurantPermission() {
+        var userId = UUID.randomUUID();
+        var itemId = UUID.randomUUID();
+        when(items.getById(itemId)).thenReturn(Optional.empty());
+
+        assertThrows(MenuItemNotFountException.class,
+                () -> menu.checkUpdateMenuItem(userId, itemId));
+
+        verify(items).getById(itemId);
+        verifyNoInteractions(users, memberships);
     }
 }

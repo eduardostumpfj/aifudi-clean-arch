@@ -94,4 +94,36 @@ class MenuItemJpaGatewayTest {
         var exception = assertThrows(ErrorOnRepositoryAccess.class, () -> gateway.getById(id));
         assertSame(failure, exception.getCause());
     }
+
+    @Test
+    void saveReturnsIdGeneratedByRepository() {
+        var generatedId = UUID.randomUUID();
+        when(restaurants.getReferenceById(restaurantId)).thenReturn(restaurant());
+        when(repository.save(any())).thenAnswer(i -> {
+            MenuItemEntity entity = i.getArgument(0);
+            assertNull(entity.getId());
+            entity.setId(generatedId);
+            return entity;
+        });
+        var pending = new MenuItem(null, "Item", "Description", java.math.BigDecimal.TEN, true, "picture", restaurantId);
+        assertEquals(generatedId, gateway.save(pending).getId());
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"save", "delete", "update"})
+    void wrapsWriteFailuresAndPreservesCause(String operation) {
+        var failure = new DataAccessResourceFailureException("offline");
+        when(restaurants.getReferenceById(restaurantId)).thenReturn(restaurant());
+        when(repository.save(any())).thenThrow(failure);
+        when(repository.deleteByIdReturningCount(id)).thenThrow(failure);
+        when(repository.findById(id)).thenReturn(Optional.of(new MenuItemMapper().map(item(), restaurant())));
+        var error = assertThrows(ErrorOnRepositoryAccess.class, () -> {
+            switch (operation) {
+                case "save" -> gateway.save(item());
+                case "delete" -> gateway.delete(id);
+                default -> gateway.update(item());
+            }
+        });
+        assertSame(failure, error.getCause());
+    }
 }

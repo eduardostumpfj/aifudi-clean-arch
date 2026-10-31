@@ -1,4 +1,4 @@
-package com.aifudi_clean_arch.backend.infra.web;
+package com.aifudi_clean_arch.backend.infra.web.handler;
 
 import com.aifudi_clean_arch.backend.core.exception.*;
 import com.aifudi_clean_arch.backend.infra.web.handler.ControllerExceptionHandler;
