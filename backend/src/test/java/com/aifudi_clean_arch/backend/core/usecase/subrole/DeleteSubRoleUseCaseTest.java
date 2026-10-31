@@ -43,7 +43,7 @@ class DeleteSubRoleUseCaseTest {
 
     @Test
     void rejectsDeletingMainOwner() {
-        when(subroles.getById(subroleId)).thenReturn(Optional.of(new SubRole(subroleId, "main", "Principal", role)));
+        when(subroles.getById(subroleId)).thenReturn(Optional.of(new SubRole(subroleId, "mainOwner", "Principal", role)));
         assertThrows(ProtectedSubRoleException.class, () -> useCase.deleteSubRole(userId, subroleId));
         verify(subroles, never()).delete(any());
     }

@@ -41,7 +41,7 @@ public class UpdateSubRoleUseCase {
                 role
         );
 
-        if ("main".equals(updated.getValue())) {
+        if ("mainOwner".equals(updated.getValue())) {
             throw new ProtectedSubRoleException(updated.getId());
         }
 

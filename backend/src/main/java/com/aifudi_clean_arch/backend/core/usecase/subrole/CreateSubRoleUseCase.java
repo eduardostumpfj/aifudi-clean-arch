@@ -22,7 +22,7 @@ public class CreateSubRoleUseCase {
         var foundRole = roleGateway.getRole(inputDto.roleId())
                 .orElseThrow(() -> new RoleNotFoundException(inputDto.roleId()));
 
-        if("main".equals(inputDto.value())) {
+        if("mainOwner".equals(inputDto.value())) {
             throw new ProtectedSubRoleException(inputDto.value());
         }
         var newSubRole = new SubRole(null, inputDto.value(), inputDto.label(), foundRole);

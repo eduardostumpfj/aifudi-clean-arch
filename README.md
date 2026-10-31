@@ -107,6 +107,7 @@ Os testes acompanham os pacotes do código de produção em
 
 ```text
 core/
+  controller/              # Encaminhamento para os casos de uso
   domain/                  # Validações e regras das entidades
   usecase/                 # Cenários que envolvem mais de um caso de uso
     menuItem/
@@ -124,10 +125,11 @@ infra/
 Para executar os testes isolados e gerar uma medição nova, dentro de `backend`:
 
 ```sh
-./mvnw clean test '-Dtest=*Test,!BackendApplicationTests'
+./mvnw clean test
 ```
 
-Esse comando não executa `BackendApplicationTests`, que inicia o contexto Spring.
+Esse comando executa os testes unitários. O teste de inicialização do Spring foi
+movido para `integration/BackendApplicationIT` e roda com o Failsafe.
 O relatório é gerado em `target/site/jacoco/index.html`, sem excluir pacotes de
 produção do cálculo. Não há exigência automática de cobertura mínima configurada.
 Para executar apenas as validações de domínio:
@@ -139,3 +141,61 @@ Para executar apenas as validações de domínio:
 `MenuItem.hasPrice()` possui um caminho falso que o construtor não permite
 alcançar: itens com preço nulo ou não positivo são rejeitados na criação. Os
 testes preservam essa regra, sem alterar o estado interno para aumentar a cobertura.
+
+## Testes de integração com REST Assured
+
+Os testes em `src/test/java/com/aifudi_clean_arch/backend/integration` usam
+REST Assured (`given / when / then`), Spring Boot numa porta aleatória e
+PostgreSQL real em um Docker Compose separado. Não usam Testcontainers ou mocks.
+O teste de inicialização também fica nessa pasta como `BackendApplicationIT`.
+
+Na raiz do projeto, com o Docker Desktop aberto, suba o banco exclusivo de testes:
+
+```sh
+docker --context desktop-linux compose -f docker-compose.test.yml up -d --wait
+```
+
+O banco `aifudi_integration` usa a porta local `55432`, usuário e senha
+`integration` e é inicializado por `postgres-db/init.sql`. O serviço de testes
+não utiliza o volume do banco de desenvolvimento. Seus dados ficam em memória
+no contêiner e são descartados quando ele é parado. Para outro ambiente Docker,
+use o contexto correspondente no comando.
+
+Dentro de `backend`, execute:
+
+```sh
+./mvnw clean test     # Apenas unitários; não usa banco
+./mvnw clean verify   # Unitários e integração; exige o banco de testes rodando
+```
+
+O perfil `integration` usa `src/test/resources/application-integration.properties`.
+Para mudar a conexão, configure `TEST_DB_URL`, `TEST_DB_USERNAME` e
+`TEST_DB_PASSWORD`. O nome do banco deve continuar sendo `aifudi_integration`;
+os testes verificam isso antes de limpar dados. Não use o banco de desenvolvimento.
+
+Os cenários de menuItem limpam o cardápio antes de cada teste. Os cenários de
+restaurante removem somente os restaurantes e relacionamentos criados pelo
+próprio cenário. Não execute os cenários em paralelo, pois compartilham o banco.
+
+Ao terminar, na raiz do projeto:
+
+```sh
+docker --context desktop-linux compose -f docker-compose.test.yml down
+```
+
+Os relatórios são separados:
+
+- Unitários: `backend/target/surefire-reports` e `backend/target/site/jacoco/index.html`.
+- Integração: `backend/target/failsafe-reports` e `backend/target/site/jacoco-it/index.html`.
+
+`MenuItemApiIT` cobre o CRUD, autenticação, permissões e validações do cardápio.
+`RestaurantApiIT` cobre cadastro com vínculo `mainOwner`, consulta com coleções,
+atualização parcial e de cozinha, exclusão, permissões e entradas inválidas.
+A exclusão de um restaurante com vínculos retorna 409, conforme as restrições
+atuais do banco; a exclusão sem dependências retorna 200.
+
+`SubRoleApiIT` cobre CRUD com acesso ADMIN, cabeçalho Location, papel inexistente,
+valores duplicados, proteção de `mainOwner`, conflitos de exclusão, criação e
+reatribuição de memberships com preservação do ID, dependências ausentes e
+validações. Os cenários limpam somente os subroles e restaurantes criados pelo
+próprio teste, sem alterar os perfis globais dos usuários iniciais.

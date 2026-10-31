@@ -20,7 +20,7 @@ class CoreRulesTest {
     private final SubRoleGateway subRoles = mock(SubRoleGateway.class, withSettings().mockMaker("mock-maker-subclass"));
     private final RoleGateway roles = mock(RoleGateway.class, withSettings().mockMaker("mock-maker-subclass"));
     private final Role owner = new Role(UUID.randomUUID(), "OWNER", "Owner");
-    private final SubRole main = new SubRole(UUID.randomUUID(), "main", "Main", owner);
+    private final SubRole main = new SubRole(UUID.randomUUID(), "mainOwner", "Main", owner);
     private final SubRole staff = new SubRole(UUID.randomUUID(), "staff", "Staff", owner);
 
     @Test
@@ -28,7 +28,7 @@ class CoreRulesTest {
         when(subRoles.getById(staff.getId())).thenReturn(Optional.of(staff));
         var useCase = new UpdateSubRoleUseCase(roles, subRoles, permission);
         assertThrows(ProtectedSubRoleException.class, () -> useCase.update(actorId,
-                new UpdateSubRoleInputDto(staff.getId(), Optional.of("main"), Optional.empty(), Optional.empty())));
+                new UpdateSubRoleInputDto(staff.getId(), Optional.of("mainOwner"), Optional.empty(), Optional.empty())));
         verify(subRoles, never()).update(any());
     }
 
@@ -46,7 +46,7 @@ class CoreRulesTest {
         when(roles.getRole(owner.getId())).thenReturn(Optional.of(owner));
         var useCase = new CreateSubRoleUseCase(roles, subRoles, permission);
         assertThrows(ProtectedSubRoleException.class, () -> useCase.createSubRole(actorId,
-                new CreateSubRoleInputDto("main", "Main", owner.getId())));
+                new CreateSubRoleInputDto("mainOwner", "Main", owner.getId())));
         assertThrows(IllegalArgumentException.class, () -> useCase.createSubRole(actorId,
                 new CreateSubRoleInputDto(null, "Label", owner.getId())));
         verify(subRoles, never()).save(any());

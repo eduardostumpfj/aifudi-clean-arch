@@ -28,13 +28,13 @@ class DatabaseGeneratedIdTest {
         var transactions = mockType(TransactionGateway.class);
         var permission = mockType(CheckRestaurantPermission.class);
         var role = new Role(UUID.randomUUID(), "OWNER", "Owner");
-        var subrole = new SubRole(UUID.randomUUID(), "main", "Main", role);
+        var subrole = new SubRole(UUID.randomUUID(), "mainOwner", "Main", role);
         var owner = new User(UUID.randomUUID(), "Owner", "a@b.com", "owner", "hash", "Address", subrole);
         var kitchen = new Kitchen(UUID.randomUUID(), "type", "Type");
         var generatedId = UUID.randomUUID();
         when(users.getUserById(owner.getId())).thenReturn(Optional.of(owner));
         when(kitchens.getKitchenById(kitchen.getId())).thenReturn(Optional.of(kitchen));
-        when(subroles.getByValue("main")).thenReturn(Optional.of(subrole));
+        when(subroles.getByValue("mainOwner")).thenReturn(Optional.of(subrole));
         when(transactions.execute(any())).thenAnswer(i -> ((Supplier<?>) i.getArgument(0)).get());
         when(restaurants.save(any())).thenAnswer(i -> {
             Restaurant pending = i.getArgument(0);

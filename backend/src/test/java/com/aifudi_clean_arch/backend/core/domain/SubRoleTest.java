@@ -22,12 +22,12 @@ class SubRoleTest {
     @Test
     void identifiesMainOwnerOnlyWhenBothValueAndRoleMatch() {
         var id = UUID.randomUUID();
-        var mainOwner = new SubRole(id, "main", "Principal", owner);
+        var mainOwner = new SubRole(id, "mainOwner", "Principal", owner);
         var user = new Role(UUID.randomUUID(), "USER", "Cliente");
         assertAll(() -> assertEquals(id, mainOwner.getId()),
                 () -> assertTrue(mainOwner.isMainOwner()),
                 () -> assertFalse(new SubRole(id, "staff", "Equipe", owner).isMainOwner()),
-                () -> assertFalse(new SubRole(id, "main", "Principal", user).isMainOwner()));
+                () -> assertFalse(new SubRole(id, "mainOwner", "Principal", user).isMainOwner()));
     }
 
     @ParameterizedTest

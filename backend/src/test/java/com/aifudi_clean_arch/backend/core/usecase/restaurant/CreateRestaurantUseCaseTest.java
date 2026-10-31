@@ -33,7 +33,7 @@ class CreateRestaurantUseCaseTest {
     private final TransactionGateway transactions = mockType(TransactionGateway.class);
     private final CreateRestaurantUseCase useCase = new CreateRestaurantUseCase(restaurants, users, subroles,
             kitchens, memberships, transactions, permission);
-    private final SubRole ownerRole = new SubRole(UUID.randomUUID(), "main", "Principal", new Role(UUID.randomUUID(), "OWNER", "Proprietário"));
+    private final SubRole ownerRole = new SubRole(UUID.randomUUID(), "mainOwner", "Principal", new Role(UUID.randomUUID(), "OWNER", "Proprietário"));
     private final User owner = new User(UUID.randomUUID(), "Dono", "owner@example.com", "owner", "hash", "Endereço", ownerRole);
 
     private CreateRestaurantInputDto input() {
@@ -42,7 +42,7 @@ class CreateRestaurantUseCaseTest {
     private void dependenciesExist() {
         when(users.getUserById(owner.getId())).thenReturn(Optional.of(owner));
         when(kitchens.getKitchenById(kitchen.getId())).thenReturn(Optional.of(kitchen));
-        when(subroles.getByValue("main")).thenReturn(Optional.of(ownerRole));
+        when(subroles.getByValue("mainOwner")).thenReturn(Optional.of(ownerRole));
     }
     private void executeTransaction() {
         when(transactions.execute(any())).thenAnswer(i -> ((Supplier<?>) i.getArgument(0)).get());
@@ -105,7 +105,7 @@ class CreateRestaurantUseCaseTest {
     @Test
     void rejectsMissingOwnerSubrole() {
         dependenciesExist();
-        when(subroles.getByValue("main")).thenReturn(Optional.empty());
+        when(subroles.getByValue("mainOwner")).thenReturn(Optional.empty());
         assertThrows(SubRoleNotFoundException.class, () -> useCase.createRestaurant(userId, input()));
         verifyNoInteractions(restaurants, memberships, transactions);
     }

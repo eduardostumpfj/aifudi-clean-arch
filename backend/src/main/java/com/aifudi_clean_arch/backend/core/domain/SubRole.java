@@ -29,6 +29,6 @@ public class SubRole {
     }
 
     public boolean isMainOwner(){
-        return "main".equals(value) &&  "OWNER".equals(role.getValue());
+        return "mainOwner".equals(value) &&  "OWNER".equals(role.getValue());
     }
 }

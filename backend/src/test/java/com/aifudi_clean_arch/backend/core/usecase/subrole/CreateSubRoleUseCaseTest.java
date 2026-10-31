@@ -53,7 +53,7 @@ class CreateSubRoleUseCaseTest {
     @Test
     void rejectsReservedMainValue() {
         when(roles.getRole(role.getId())).thenReturn(Optional.of(role));
-        assertThrows(ProtectedSubRoleException.class, () -> useCase.createSubRole(userId, new CreateSubRoleInputDto("main", "Principal", role.getId())));
+        assertThrows(ProtectedSubRoleException.class, () -> useCase.createSubRole(userId, new CreateSubRoleInputDto("mainOwner", "Principal", role.getId())));
         verifyNoInteractions(subroles);
     }
 

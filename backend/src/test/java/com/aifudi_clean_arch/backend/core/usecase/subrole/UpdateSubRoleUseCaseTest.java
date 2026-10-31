@@ -76,7 +76,7 @@ class UpdateSubRoleUseCaseTest {
 
     @Test
     void rejectsChangingMainOwner() {
-        when(subroles.getById(subroleId)).thenReturn(Optional.of(new SubRole(subroleId, "main", "Principal", role)));
+        when(subroles.getById(subroleId)).thenReturn(Optional.of(new SubRole(subroleId, "mainOwner", "Principal", role)));
         assertThrows(ProtectedSubRoleException.class, () -> useCase.update(userId, emptyInput()));
         verify(subroles, never()).update(any());
         verifyNoInteractions(roles);
@@ -95,7 +95,7 @@ class UpdateSubRoleUseCaseTest {
     @Test
     void rejectsRenamingToReservedMain() {
         when(subroles.getById(subroleId)).thenReturn(Optional.of(current));
-        var input = new UpdateSubRoleInputDto(subroleId, Optional.of("main"), Optional.empty(), Optional.empty());
+        var input = new UpdateSubRoleInputDto(subroleId, Optional.of("mainOwner"), Optional.empty(), Optional.empty());
         assertThrows(ProtectedSubRoleException.class, () -> useCase.update(userId, input));
         verify(subroles, never()).update(any());
     }

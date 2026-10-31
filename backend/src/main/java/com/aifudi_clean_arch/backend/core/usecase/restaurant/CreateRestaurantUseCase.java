@@ -32,8 +32,8 @@ public class CreateRestaurantUseCase {
         var foundKitchen = kitchenGateway.getKitchenById(inputDto.kitchenId())
                 .orElseThrow(() -> new KitchenNotFoundException(inputDto.kitchenId()));
 
-        var ownerSubRole = subRoleGateway.getByValue("main")
-                .orElseThrow(() -> new SubRoleNotFoundException("main"));
+        var ownerSubRole = subRoleGateway.getByValue("mainOwner")
+                .orElseThrow(() -> new SubRoleNotFoundException("mainOwner"));
 
 
         var newRestaurant = new Restaurant(

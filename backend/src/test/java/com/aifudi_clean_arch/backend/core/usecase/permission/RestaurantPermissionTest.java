@@ -21,7 +21,7 @@ class RestaurantPermissionTest {
     private final CheckRestaurantPermission permission = new CheckRestaurantPermission(new RestaurantPermissionChecker(users, memberships));
     private final BasicHeaderAuthenticator authenticator = new BasicHeaderAuthenticator(users, passwords);
     private final UUID restaurantId = UUID.randomUUID();
-    private final SubRole owner = new SubRole(UUID.randomUUID(), "main", "Owner", new Role(UUID.randomUUID(), "OWNER", "Owner"));
+    private final SubRole owner = new SubRole(UUID.randomUUID(), "mainOwner", "Owner", new Role(UUID.randomUUID(), "OWNER", "Owner"));
     private final User user = new User(UUID.randomUUID(), "User", "u@example.com", "user", "hash", "Address", owner);
 
     private String auth(String credentials) {

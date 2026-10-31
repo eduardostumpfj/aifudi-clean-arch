@@ -1,0 +1,23 @@
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: aifudi_integration
+      POSTGRES_USER: integration
+      POSTGRES_PASSWORD: integration
+    ports:
+      - "127.0.0.1:55432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - type: bind
+        source: ./postgres-db/init.sql
+        target: /docker-entrypoint-initdb.d/init.sql
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U integration -d aifudi_integration"]
+      interval: 2s
+      timeout: 5s
+      retries: 20

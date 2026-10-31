@@ -116,7 +116,7 @@ class AssignSubRoleToUserUseCaseTest {
 
     @Test
     void rejectsAssignmentOfMainOwner() {
-        var main = new SubRole(UUID.randomUUID(), "main", "Principal", ownerRole);
+        var main = new SubRole(UUID.randomUUID(), "mainOwner", "Principal", ownerRole);
         resourcesExist(main);
         assertThrows(ProtectedSubRoleException.class, () -> useCase.assignSubRoleToUser(actorId, input(main)));
         verify(memberships, never()).save(any());
@@ -125,7 +125,7 @@ class AssignSubRoleToUserUseCaseTest {
     @Test
     void rejectsReplacingExistingMainOwner() {
         resourcesExist(staff);
-        var main = new SubRole(UUID.randomUUID(), "main", "Principal", ownerRole);
+        var main = new SubRole(UUID.randomUUID(), "mainOwner", "Principal", ownerRole);
         when(memberships.getUserRestaurantMembership(target.getId(), restaurant.getId()))
                 .thenReturn(Optional.of(new Membership(UUID.randomUUID(), target, main, restaurant)));
         assertThrows(ProtectedSubRoleException.class, () -> useCase.assignSubRoleToUser(actorId, input(staff)));

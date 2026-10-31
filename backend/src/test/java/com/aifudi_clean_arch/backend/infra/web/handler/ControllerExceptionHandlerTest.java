@@ -26,7 +26,7 @@ class ControllerExceptionHandlerTest {
                 case "auth" -> throw new InvalidCredentialsException();
                 case "permission" -> throw new NotAllowedException();
                 case "missing" -> throw new RestaurantNotFoundException(UUID.randomUUID());
-                case "protected" -> throw new ProtectedSubRoleException("main");
+                case "protected" -> throw new ProtectedSubRoleException("mainOwner");
                 case "price" -> throw new MenuItemInvalidPrice(UUID.randomUUID());
                 case "conflict" -> throw new DataIntegrityViolationException("secret SQL");
                 case "wrapped-conflict" -> throw new ErrorOnRepositoryAccess("database details",

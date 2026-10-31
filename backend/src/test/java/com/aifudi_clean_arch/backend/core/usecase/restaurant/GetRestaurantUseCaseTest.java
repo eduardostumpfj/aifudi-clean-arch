@@ -30,7 +30,7 @@ class GetRestaurantUseCaseTest {
 
     @Test
     void returnsRestaurantWithMembershipAndMenuItemIds() {
-        var subrole = new SubRole(UUID.randomUUID(), "main", "Principal", new Role(UUID.randomUUID(), "OWNER", "Dono"));
+        var subrole = new SubRole(UUID.randomUUID(), "mainOwner", "Principal", new Role(UUID.randomUUID(), "OWNER", "Dono"));
         var user = new User(userId, "Dono", "owner@example.com", "owner", "hash", "Endereço", subrole);
         var membership = new Membership(UUID.randomUUID(), user, subrole, restaurant());
         var item = new MenuItem(UUID.randomUUID(), "Item", "Descrição", BigDecimal.TEN, true, "item.jpg", restaurantId);

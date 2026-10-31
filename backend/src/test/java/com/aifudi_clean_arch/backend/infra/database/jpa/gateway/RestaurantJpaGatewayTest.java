@@ -32,7 +32,7 @@ class RestaurantJpaGatewayTest {
     @Test
     void loadsMembersAndMenuWithoutRecursiveExpansion() {
         var role = new RoleEntity(UUID.randomUUID(), "OWNER", "Owner");
-        var subRole = new SubRoleEntity(UUID.randomUUID(), role, "main", "Main");
+        var subRole = new SubRoleEntity(UUID.randomUUID(), role, "mainOwner", "Main");
         var user = new UserEntity(UUID.randomUUID(), subRole, "User", "login", "email", "hash", "Address");
         var member = new MembershipEntity(UUID.randomUUID(), user, subRole, entity);
         var item = new MenuItemEntity(UUID.randomUUID(), entity, "Item", "Desc", BigDecimal.ONE, "picture", false);
