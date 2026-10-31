@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
+import org.hibernate.annotations.Generated;
 
 @Entity
 @Table(name = "roles")
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Builder
 public class RoleEntity {
     @Id
+    @Generated
     private UUID id;
 
     @Column(nullable = false, length = 50, unique = true)

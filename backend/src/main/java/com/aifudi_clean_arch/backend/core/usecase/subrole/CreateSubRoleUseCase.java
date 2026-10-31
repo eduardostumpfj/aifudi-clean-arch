@@ -25,16 +25,15 @@ public class CreateSubRoleUseCase {
         if("main".equals(inputDto.value())) {
             throw new ProtectedSubRoleException(inputDto.value());
         }
-        var newId = UUID.randomUUID();
-        var newSubRole = new SubRole(newId, inputDto.value(), inputDto.label(), foundRole);
+        var newSubRole = new SubRole(null, inputDto.value(), inputDto.label(), foundRole);
 
-        subRoleGateway.save(newSubRole);
+        var savedSubRole = subRoleGateway.save(newSubRole);
 
         return new SubRoleOutputDto(
-                newSubRole.getId(),
-                newSubRole.getValue(),
-                newSubRole.getLabel(),
-                newSubRole.getRole().getId()
+                savedSubRole.getId(),
+                savedSubRole.getValue(),
+                savedSubRole.getLabel(),
+                savedSubRole.getRole().getId()
         );
     }
 }

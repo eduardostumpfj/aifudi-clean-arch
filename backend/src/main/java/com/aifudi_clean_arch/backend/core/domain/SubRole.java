@@ -12,9 +12,6 @@ public class SubRole {
     private final Role role;
 
     public SubRole(UUID id, String value, String label, Role role){
-        if (id == null) {
-            throw new IllegalArgumentException("ID é obrigatório.");
-        }
         if(value == null || value.isBlank()){
             throw new IllegalArgumentException("Value não pode ser nulo.");
         }

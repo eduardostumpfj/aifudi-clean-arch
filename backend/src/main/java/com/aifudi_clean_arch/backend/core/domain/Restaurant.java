@@ -16,9 +16,6 @@ public class Restaurant {
     private Set<MenuItem> menuItems;
 
     public Restaurant(UUID id, String name, String address, String openingTime, Kitchen kitchen, Set<Membership> members, Set<MenuItem> menuItems) {
-        if (id == null) {
-            throw new IllegalArgumentException("id é obrigatório.");
-        }
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("name é obrigatório.");
         }

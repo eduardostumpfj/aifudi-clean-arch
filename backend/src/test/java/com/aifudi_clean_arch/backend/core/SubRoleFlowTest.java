@@ -49,8 +49,15 @@ class SubRoleFlowTest {
         var actor = user("ADMIN").getId();
         var role = new Role(UUID.randomUUID(), "OWNER", "Owner");
         when(roles.getRole(role.getId())).thenReturn(Optional.of(role));
+        var generatedId = UUID.randomUUID();
+        when(subroles.save(any())).thenAnswer(invocation -> {
+            SubRole pending = invocation.getArgument(0);
+            assertNull(pending.getId());
+            return new SubRole(generatedId, pending.getValue(), pending.getLabel(), pending.getRole());
+        });
         var created = new CreateSubRoleUseCase(roles, subroles, permission)
                 .createSubRole(actor, new CreateSubRoleInputDto("staff", "Staff", role.getId()));
+        assertEquals(generatedId, created.id());
         var existing = new SubRole(created.id(), created.value(), created.label(), role);
         when(subroles.getById(existing.getId())).thenReturn(Optional.of(existing));
         when(subroles.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -75,12 +82,20 @@ class SubRoleFlowTest {
         when(subroles.getById(subrole.getId())).thenReturn(Optional.of(subrole));
         var useCase = new AssignSubRoleToUserUseCase(memberships, subroles, restaurants, users, permission);
         var input = new MembershipInputDto(target.getId(), subrole.getId(), restaurant.getId());
+        var generatedId = UUID.randomUUID();
+        when(memberships.save(any())).thenAnswer(invocation -> {
+            Membership pending = invocation.getArgument(0);
+            return new Membership(generatedId, pending.getUser(), pending.getSubrole(), pending.getRestaurant());
+        });
         var created = useCase.assignSubRoleToUser(actor, input);
+        assertEquals(generatedId, created.id());
+        verify(memberships).save(argThat(m -> m.getId() == null));
         assertEquals(target.getId(), created.userId());
         assertEquals(subrole.getId(), created.subRoleId());
         when(memberships.getUserRestaurantMembership(target.getId(), restaurant.getId()))
                 .thenReturn(Optional.of(new Membership(created.id(), target, subrole, restaurant)));
         assertEquals(created.id(), useCase.assignSubRoleToUser(actor, input).id());
+        verify(memberships).save(argThat(m -> generatedId.equals(m.getId())));
         verify(memberships, times(2)).save(any());
     }
 }

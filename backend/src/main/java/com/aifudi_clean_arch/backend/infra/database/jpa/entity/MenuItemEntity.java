@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import org.hibernate.annotations.Generated;
 
 @Entity
 @Table(name="menu_items")
@@ -17,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class MenuItemEntity {
     @Id
+    @Generated
     private UUID id;
 
     @ManyToOne

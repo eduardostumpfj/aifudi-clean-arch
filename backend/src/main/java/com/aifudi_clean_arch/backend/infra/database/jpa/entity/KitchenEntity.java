@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 import java.util.UUID;
+import org.hibernate.annotations.Generated;
 
 @Entity
 @Table(name = "kitchens")
@@ -16,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class KitchenEntity {
     @Id
+    @Generated
     private UUID id;
 
     @Column(nullable = false, length = 50, unique = true)

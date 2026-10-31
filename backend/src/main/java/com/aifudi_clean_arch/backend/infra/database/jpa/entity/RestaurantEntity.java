@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
+import org.hibernate.annotations.Generated;
 
 @Entity
 @Table(name = "restaurants")
@@ -16,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class RestaurantEntity {
     @Id
-
+    @Generated
     private UUID id;
 
     @ManyToOne

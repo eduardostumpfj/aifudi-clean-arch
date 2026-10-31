@@ -25,10 +25,10 @@ public class MenuItemJpaGateway implements MenuItemGateway {
 
     @Override
     @Transactional
-    public void save(MenuItem menuItem) {
+    public MenuItem save(MenuItem menuItem) {
         try {
             var restaurant = restaurantRepository.getReferenceById(menuItem.getRestaurantId());
-            repository.save(mapper.map(menuItem, restaurant));
+            return mapper.map(repository.save(mapper.map(menuItem, restaurant)));
         } catch (DataAccessException ex) {
             throw new ErrorOnRepositoryAccess("Error saving menu item: " + menuItem.getId(), ex);
         }

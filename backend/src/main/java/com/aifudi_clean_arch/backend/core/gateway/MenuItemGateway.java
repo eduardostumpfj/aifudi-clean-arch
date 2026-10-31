@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface MenuItemGateway {
-    void save(MenuItem menuItem);
+    MenuItem save(MenuItem menuItem);
     boolean delete(UUID id);
     MenuItem update(MenuItem menuItem);
     Optional<MenuItem> getById(UUID id);

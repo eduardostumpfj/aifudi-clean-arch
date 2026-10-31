@@ -12,9 +12,6 @@ public class Membership {
     private Restaurant restaurant;
 
     public Membership(UUID id, User user, SubRole subrole, Restaurant restaurant) {
-        if (id == null) {
-            throw new IllegalArgumentException("id é obrigatório.");
-        }
         if (user == null) {
             throw new IllegalArgumentException("user é obrigatório.");
         }

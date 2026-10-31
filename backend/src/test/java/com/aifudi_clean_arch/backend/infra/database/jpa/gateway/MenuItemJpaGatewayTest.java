@@ -38,7 +38,8 @@ class MenuItemJpaGatewayTest {
     @Test
     void savesAllFieldsIncludingRestaurant() {
         when(restaurants.getReferenceById(restaurantId)).thenReturn(restaurant());
-        gateway.save(item());
+        when(repository.save(any())).thenAnswer(i -> i.getArgument(0));
+        assertEquals(id, gateway.save(item()).getId());
         verify(repository).save(argThat(entity -> entity.getId().equals(id)
                 && entity.getRestaurant().getId().equals(restaurantId)
                 && entity.getPrice().equals(new BigDecimal("19.90"))));

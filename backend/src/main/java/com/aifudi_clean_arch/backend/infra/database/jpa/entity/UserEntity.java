@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
+import org.hibernate.annotations.Generated;
 
 @Entity
 @Table(name="users")
@@ -16,10 +17,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserEntity {
     @Id
+    @Generated
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name="client_role_id", nullable = false)
+    @JoinColumn(name="client_subrole_id", nullable = false)
     private SubRoleEntity subRole;
 
     @Column(nullable = false, length = 100)

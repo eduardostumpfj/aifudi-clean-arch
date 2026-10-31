@@ -49,16 +49,16 @@ public class AssignSubRoleToUserUseCase {
 
         var id = foundMembership
                 .map(Membership::getId)
-                .orElseGet(UUID::randomUUID);
+                .orElse(null);
 
         var membership = new Membership(id, user, subRole, restaurant);
-        membershipGateway.save(membership);
+        var savedMembership = membershipGateway.save(membership);
 
         return new MembershipOutputDto(
-                membership.getId(),
-                membership.getUser().getId(),
-                membership.getSubrole().getId(),
-                membership.getRestaurant().getId()
+                savedMembership.getId(),
+                savedMembership.getUser().getId(),
+                savedMembership.getSubrole().getId(),
+                savedMembership.getRestaurant().getId()
         );
     }
 }

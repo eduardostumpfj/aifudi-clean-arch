@@ -37,7 +37,7 @@ public class CreateRestaurantUseCase {
 
 
         var newRestaurant = new Restaurant(
-                UUID.randomUUID(),
+                null,
                 inputDto.name(),
                 inputDto.address(),
                 inputDto.openingTime(),
@@ -46,24 +46,17 @@ public class CreateRestaurantUseCase {
                 Set.of()
         );
 
-        var membership = new Membership(
-            UUID.randomUUID(),
-            foundUser,
-            ownerSubRole,
-            newRestaurant
-        );
-
         return transactionGateway.execute(() -> {
-
-            restaurantGateway.save(newRestaurant);
+            var savedRestaurant = restaurantGateway.save(newRestaurant);
+            var membership = new Membership(null, foundUser, ownerSubRole, savedRestaurant);
             membershipGateway.save(membership);
 
             return new CreateRestaurantOutputDto(
-                    newRestaurant.getId(),
-                    newRestaurant.getName(),
-                    newRestaurant.getAddress(),
-                    newRestaurant.getOpeningTime(),
-                    newRestaurant.getKitchen().getId(),
+                    savedRestaurant.getId(),
+                    savedRestaurant.getName(),
+                    savedRestaurant.getAddress(),
+                    savedRestaurant.getOpeningTime(),
+                    savedRestaurant.getKitchen().getId(),
                     foundUser.getId()
             );
         });

@@ -23,7 +23,7 @@ public class CreateMenuItemUseCase {
                 .orElseThrow(() -> new RestaurantNotFoundException(inputDto.restaurantId()));
 
         var newMenuItem = new MenuItem(
-                UUID.randomUUID(),
+                null,
                 inputDto.name(),
                 inputDto.description(),
                 inputDto.price(),
@@ -32,15 +32,15 @@ public class CreateMenuItemUseCase {
                 inputDto.restaurantId()
         );
 
-        menuItemGateway.save(newMenuItem);
+        var savedMenuItem = menuItemGateway.save(newMenuItem);
 
         return new MenuItemOutputDto(
-                newMenuItem.getId(),
-                newMenuItem.getName(),
-                newMenuItem.getDescription(),
-                newMenuItem.getPrice(),
-                newMenuItem.isHasDelivery(),
-                newMenuItem.getPicture(),
+                savedMenuItem.getId(),
+                savedMenuItem.getName(),
+                savedMenuItem.getDescription(),
+                savedMenuItem.getPrice(),
+                savedMenuItem.isHasDelivery(),
+                savedMenuItem.getPicture(),
                 foundRestaurant.getId()
         );
     }

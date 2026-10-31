@@ -21,8 +21,8 @@ public class MenuItem {
         if (price == null || price.signum() <= 0) {
             throw new MenuItemInvalidPrice(id);
         }
-        if (id == null || restaurantId == null) {
-            throw new IllegalArgumentException("Item e restaurante devem ter ID.");
+        if (restaurantId == null) {
+            throw new IllegalArgumentException("Restaurante deve ter ID.");
         }
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Nome do item é obrigatório.");
