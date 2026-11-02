@@ -155,8 +155,12 @@ class RestaurantApiIT extends ApiIntegrationTest {
     }
 
     @Test
-    void deletionWithExistingMembershipReturnsConflictAndPreservesData() {
+    void deletionWithExistingMenuItemReturnsConflictAndPreservesMembership() {
         UUID id = existingRestaurant(true);
+        UUID itemId = jdbc.queryForObject("""
+                INSERT INTO menu_items (restaurant_id, name, description, price, picture, has_delivery)
+                VALUES (?, 'Item', 'Descrição', 10.00, 'item.jpg', false) RETURNING id
+                """, UUID.class, id);
         asUser("brunosantos", "bruno123")
                 .when().delete(PATH + "/{id}", id)
                 .then().log().ifValidationFails().statusCode(409)
@@ -164,6 +168,34 @@ class RestaurantApiIT extends ApiIntegrationTest {
                 .body("title", equalTo("Resource conflict"));
         assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM restaurants WHERE id = ?", Integer.class, id));
         assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM memberships WHERE restaurant_id = ?", Integer.class, id));
+        assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM menu_items WHERE id = ?", Integer.class, itemId));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"brunosantos, bruno123", "admin, admin123"})
+    void deletesRestaurantCreatedThroughApiAndOnlyItsMemberships(String login, String password) {
+        UUID otherId = existingRestaurant(true);
+        String createdId = asUser(login, password)
+                .contentType(ContentType.JSON).body(payload(OWNER, KITCHEN))
+                .when().post(PATH + "/register")
+                .then().statusCode(200).extract().path("id");
+        UUID id = UUID.fromString(createdId);
+        testRestaurants.add(id);
+        jdbc.update("""
+                INSERT INTO memberships (user_id, subrole_id, restaurant_id)
+                SELECT u.id, s.id, ? FROM users u CROSS JOIN subroles s
+                WHERE u.login = 'anasilva' AND s.value = 'mainUser'
+                """, id);
+
+        asUser(login, password).when().delete(PATH + "/{id}", id)
+                .then().statusCode(200);
+
+        assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM restaurants WHERE id = ?", Integer.class, id));
+        assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM memberships WHERE restaurant_id = ?", Integer.class, id));
+        assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM memberships WHERE restaurant_id = ?", Integer.class, otherId));
+        assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM users WHERE id = ?", Integer.class, OWNER));
+        asUser("anasilva", "ana123").when().get(PATH + "/{id}", id)
+                .then().statusCode(404);
     }
 
     @Test

@@ -50,6 +50,7 @@ class UpdateMenuItemUseCaseTest {
         order.verify(permission).checkUpdateMenuItem(userId, itemId);
         order.verify(items).getById(itemId);
         order.verify(restaurants).getRestaurantById(newRestaurantId);
+        order.verify(permission).checkCreateMenuItem(userId, newRestaurantId);
         order.verify(items).update(captor.capture());
         var updated = captor.getValue();
         assertAll(() -> assertEquals(itemId, updated.getId()),
@@ -59,6 +60,20 @@ class UpdateMenuItemUseCaseTest {
                 () -> assertFalse(updated.isHasDelivery()),
                 () -> assertEquals("new.jpg", updated.getPicture()),
                 () -> assertEquals(newRestaurantId, updated.getRestaurantId()));
+    }
+
+    @Test
+    void doesNotPersistAnyChangesWhenDestinationPermissionIsDenied() {
+        itemExists();
+        var destination = UUID.randomUUID();
+        when(restaurants.getRestaurantById(destination)).thenReturn(Optional.of(new Restaurant(destination,
+                "Destino", "Endereço", "09:00", new Kitchen(UUID.randomUUID(), "type", "Type"), Set.of(), Set.of())));
+        doThrow(new NotAllowedException()).when(permission).checkCreateMenuItem(userId, destination);
+        var input = new UpdateMenuItemInputDto(itemId, Optional.of("Alterado"), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.of(destination));
+
+        assertThrows(NotAllowedException.class, () -> useCase.updateMenuItem(userId, input));
+        verify(items, never()).update(any());
     }
 
     @Test

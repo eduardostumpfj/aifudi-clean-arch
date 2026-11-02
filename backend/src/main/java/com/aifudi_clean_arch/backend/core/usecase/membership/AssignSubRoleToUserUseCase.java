@@ -25,7 +25,7 @@ public class AssignSubRoleToUserUseCase {
     private final CheckSubRolePermission permission;
 
     public MembershipOutputDto assignSubRoleToUser(UUID authenticatedUserId, MembershipInputDto inputDto) {
-        permission.checkAssignSubRole(authenticatedUserId);
+        boolean isAdmin = permission.checkAssignSubRole(authenticatedUserId, inputDto.restaurantId());
         var user = userGateway.getUserById(inputDto.userId())
                 .orElseThrow(() -> new UserNotFoundException(inputDto.userId()));
 
@@ -38,14 +38,17 @@ public class AssignSubRoleToUserUseCase {
         var foundMembership = membershipGateway.getUserRestaurantMembership(
                 inputDto.userId(), inputDto.restaurantId());
 
-        if (subRole.isMainOwner()) {
-            throw new ProtectedSubRoleException(subRole.getId());
-        }
-        foundMembership.ifPresent(existing -> {
-            if (existing.getSubrole().isMainOwner()) {
-                throw new ProtectedSubRoleException(existing.getSubrole().getId());
+        if (!isAdmin) {
+            if (subRole.isMainOwner() || "ADMIN".equals(subRole.getRole().getValue())) {
+                throw new ProtectedSubRoleException(subRole.getId());
             }
-        });
+            foundMembership.ifPresent(existing -> {
+                if (existing.getSubrole().isMainOwner()
+                        || "ADMIN".equals(existing.getSubrole().getRole().getValue())) {
+                    throw new ProtectedSubRoleException(existing.getSubrole().getId());
+                }
+            });
+        }
 
         var id = foundMembership
                 .map(Membership::getId)

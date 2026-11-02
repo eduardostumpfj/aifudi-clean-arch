@@ -24,7 +24,7 @@ public class CheckSubRolePermission {
         permissionChecker.checkRoles(userId, "ADMIN");
     }
 
-    public void checkAssignSubRole(UUID userId) {
-        permissionChecker.checkRoles(userId, "ADMIN");
+    public boolean checkAssignSubRole(UUID userId, UUID restaurantId) {
+        return permissionChecker.checkAssignSubRole(userId, restaurantId);
     }
 }

@@ -247,21 +247,64 @@ class SubRoleApiIT extends ApiIntegrationTest {
     }
 
     @Test
-    void cannotAssignProtectedMainOwner() {
+    void mainOwnerCannotAssignProtectedMainOwner() {
         UUID restaurant = existingRestaurant();
-        asUser("admin", "admin123").contentType(ContentType.JSON).body(assignment(ANA, MAIN_OWNER, restaurant))
-                .when().post(PATH + "/assign").then().log().ifValidationFails().statusCode(403);
-        assertEquals(0, membershipCount(restaurant));
+        existingMembership(BRUNO, MAIN_OWNER, restaurant);
+        asUser("brunosantos", "bruno123").contentType(ContentType.JSON).body(assignment(ANA, MAIN_OWNER, restaurant))
+                .when().post(PATH + "/assign").then().statusCode(403);
+        assertEquals(1, membershipCount(restaurant));
     }
 
     @Test
-    void cannotReplaceExistingMainOwnerMembership() {
+    void mainOwnerCannotReplaceOwnMembership() {
         UUID subrole = existingSubrole();
         UUID restaurant = existingRestaurant();
         UUID membership = existingMembership(BRUNO, MAIN_OWNER, restaurant);
-        asUser("admin", "admin123").contentType(ContentType.JSON).body(assignment(BRUNO, subrole, restaurant))
-                .when().post(PATH + "/assign").then().log().ifValidationFails().statusCode(403);
+        asUser("brunosantos", "bruno123").contentType(ContentType.JSON).body(assignment(BRUNO, subrole, restaurant))
+                .when().post(PATH + "/assign").then().statusCode(403);
         assertEquals(MAIN_OWNER, jdbc.queryForObject("SELECT subrole_id FROM memberships WHERE id = ?", UUID.class, membership));
+    }
+
+    @Test
+    void mainOwnerAssignsAndUpdatesOnlyWithinOwnRestaurant() {
+        UUID restaurant = existingRestaurant();
+        existingMembership(BRUNO, MAIN_OWNER, restaurant);
+        UUID subrole = existingSubrole();
+        String id = asUser("brunosantos", "bruno123").contentType(ContentType.JSON)
+                .body(assignment(ANA, subrole, restaurant)).post(PATH + "/assign")
+                .then().statusCode(200).extract().path("id");
+        asUser("brunosantos", "bruno123").contentType(ContentType.JSON)
+                .body(assignment(ANA, MAIN_USER, restaurant)).post(PATH + "/assign")
+                .then().statusCode(200).body("id", equalTo(id));
+        asUser("carlaoliveira", "carla123").contentType(ContentType.JSON)
+                .body(assignment(ANA, subrole, restaurant)).post(PATH + "/assign")
+                .then().statusCode(403);
+        assertEquals(MAIN_USER, jdbc.queryForObject("SELECT subrole_id FROM memberships WHERE id = ?", UUID.class, UUID.fromString(id)));
+        assertEquals(MAIN_USER, jdbc.queryForObject("SELECT client_subrole_id FROM users WHERE id = ?", UUID.class, ANA));
+    }
+
+    @Test
+    void mainOwnerCannotAssignAdminOrReplaceAdminMembership() {
+        UUID restaurant = existingRestaurant();
+        existingMembership(BRUNO, MAIN_OWNER, restaurant);
+        UUID admin = UUID.fromString("00000000-0000-4000-8000-000000000011");
+        asUser("brunosantos", "bruno123").contentType(ContentType.JSON)
+                .body(assignment(ANA, admin, restaurant)).post(PATH + "/assign").then().statusCode(403);
+        UUID membership = existingMembership(ANA, admin, restaurant);
+        asUser("brunosantos", "bruno123").contentType(ContentType.JSON)
+                .body(assignment(ANA, MAIN_USER, restaurant)).post(PATH + "/assign").then().statusCode(403);
+        assertEquals(admin, jdbc.queryForObject("SELECT subrole_id FROM memberships WHERE id = ?", UUID.class, membership));
+    }
+
+    @Test
+    void adminCanAssignAndReplaceMainOwner() {
+        UUID restaurant = existingRestaurant();
+        asUser("admin", "admin123").contentType(ContentType.JSON)
+                .body(assignment(ANA, MAIN_OWNER, restaurant)).post(PATH + "/assign").then().statusCode(200);
+        asUser("admin", "admin123").contentType(ContentType.JSON)
+                .body(assignment(ANA, MAIN_USER, restaurant)).post(PATH + "/assign").then().statusCode(200);
+        assertEquals(1, membershipCount(restaurant));
+        assertEquals(MAIN_USER, jdbc.queryForObject("SELECT subrole_id FROM memberships WHERE restaurant_id = ?", UUID.class, restaurant));
     }
 
     @ParameterizedTest

@@ -112,6 +112,53 @@ class MenuItemApiIT extends ApiIntegrationTest {
     }
 
     @Test
+    void ownerCannotMoveOwnItemToAnotherOwnersRestaurant() {
+        UUID id = existingItem(BRUNO_RESTAURANT);
+        asUser("brunosantos", "bruno123").contentType(ContentType.JSON)
+                .body("{\"name\":\"Alterado\",\"restaurantId\":\"%s\"}".formatted(CARLA_RESTAURANT))
+                .when().put(PATH + "/{id}", id).then().statusCode(403);
+        assertEquals(BRUNO_RESTAURANT, jdbc.queryForObject("SELECT restaurant_id FROM menu_items WHERE id = ?", UUID.class, id));
+        assertEquals("Hambúrguer", jdbc.queryForObject("SELECT name FROM menu_items WHERE id = ?", String.class, id));
+    }
+
+    @Test
+    void destinationOwnerCannotTakeAnotherOwnersItem() {
+        UUID id = existingItem(CARLA_RESTAURANT);
+        asUser("brunosantos", "bruno123").contentType(ContentType.JSON)
+                .body("{\"restaurantId\":\"%s\"}".formatted(BRUNO_RESTAURANT))
+                .when().put(PATH + "/{id}", id).then().statusCode(403);
+        assertEquals(CARLA_RESTAURANT, jdbc.queryForObject("SELECT restaurant_id FROM menu_items WHERE id = ?", UUID.class, id));
+    }
+
+    @Test
+    void adminCanMoveItemBetweenRestaurants() {
+        UUID id = existingItem(BRUNO_RESTAURANT);
+        asUser("admin", "admin123").contentType(ContentType.JSON)
+                .body("{\"restaurantId\":\"%s\"}".formatted(CARLA_RESTAURANT))
+                .when().put(PATH + "/{id}", id).then().statusCode(200)
+                .body("restaurantId", equalTo(CARLA_RESTAURANT.toString()));
+        assertEquals(CARLA_RESTAURANT, jdbc.queryForObject("SELECT restaurant_id FROM menu_items WHERE id = ?", UUID.class, id));
+    }
+
+    @Test
+    void ownerCanMoveItemWhenAuthorizedInBothRestaurants() {
+        UUID membershipId = jdbc.queryForObject("""
+                INSERT INTO memberships (user_id, subrole_id, restaurant_id)
+                SELECT u.id, s.id, ? FROM users u CROSS JOIN subroles s
+                WHERE u.login = 'brunosantos' AND s.value = 'mainOwner' RETURNING id
+                """, UUID.class, CARLA_RESTAURANT);
+        try {
+            UUID id = existingItem(BRUNO_RESTAURANT);
+            asUser("brunosantos", "bruno123").contentType(ContentType.JSON)
+                    .body("{\"restaurantId\":\"%s\"}".formatted(CARLA_RESTAURANT))
+                    .when().put(PATH + "/{id}", id).then().statusCode(200);
+            assertEquals(CARLA_RESTAURANT, jdbc.queryForObject("SELECT restaurant_id FROM menu_items WHERE id = ?", UUID.class, id));
+        } finally {
+            jdbc.update("DELETE FROM memberships WHERE id = ?", membershipId);
+        }
+    }
+
+    @Test
     void ownerDeletesItemAndSubsequentGetReturnsNotFound() {
         UUID id = existingItem(BRUNO_RESTAURANT);
         asUser("brunosantos", "bruno123")

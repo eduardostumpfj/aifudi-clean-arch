@@ -18,7 +18,7 @@ public record UpdateRestaurantJson(
         @Size(max = 255, message = "The field must be 255 characters or less")
         String openingTime,
 
-        @Schema(description = "Kitchen identifier", example = "123e4567-e89b-12d3-a456-426614174000", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        @Schema(description = "Kitchen identifier", example = "00000000-0000-4000-8000-000000000203", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
         UUID kitchenId
 ) {
 }

@@ -6,10 +6,10 @@ import java.util.UUID;
 
 @Schema(title = "Assign Subrole Schema")
 public record AssignSubRoleJson(
-        @Schema(description = "User receiving the subrole", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "User receiving the subrole", example = "00000000-0000-4000-8000-000000000104", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull UUID userId,
-        @Schema(description = "Subrole to assign", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Subrole to assign", example = "00000000-0000-4000-8000-000000000013", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull UUID subRoleId,
-        @Schema(description = "Restaurant of the membership", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Restaurant of the membership", example = "00000000-0000-4000-8000-000000000301", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull UUID restaurantId
 ) {}

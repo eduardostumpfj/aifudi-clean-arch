@@ -1,6 +1,6 @@
 # Subroles
 
-Gerencia subroles associados a um papel (`role`) e atribui subroles a usuários em restaurantes por meio de vínculos (`memberships`). Todas as operações exigem autenticação HTTP Basic com um usuário de papel global **ADMIN**.
+Gerencia subroles associados a um papel (`role`) e atribui subroles a usuários em restaurantes por meio de vínculos (`memberships`). Todas as operações exigem autenticação HTTP Basic. O CRUD de subroles exige papel global **ADMIN**; o assign também aceita o **mainOwner do restaurante**.
 
 ## Configuração no Postman
 
@@ -148,8 +148,10 @@ Exemplo ilustrativo de resposta:
 ```
 
 - Usuário, restaurante ou subrole inexistente: `404 Not Found`.
-- Atribuição do proprietário principal (`mainOwner` associado a `OWNER`): `403 Forbidden`.
-- Substituição de um vínculo que já possui esse proprietário principal: `403 Forbidden`.
+- ADMIN pode atribuir qualquer subrole e substituir qualquer vínculo, incluindo `mainOwner`.
+- mainOwner pode atribuir subroles comuns somente no restaurante em que possui esse vínculo.
+- mainOwner não pode atribuir nem substituir vínculos `mainOwner` ou associados ao papel `ADMIN`; essas tentativas retornam `403 Forbidden`. Isso também impede mudar sua própria função.
+- Outros usuários, inclusive OWNER sem vínculo mainOwner no restaurante solicitado, recebem `403 Forbidden`.
 
 ## Respostas de erro
 
@@ -159,7 +161,7 @@ Os erros são retornados no formato Problem Detail (`application/problem+json`).
 | --- | --- |
 | `400 Bad Request` | JSON inválido, UUID inválido ou campos que não atendem às validações |
 | `401 Unauthorized` | Credenciais ausentes ou inválidas |
-| `403 Forbidden` | Usuário sem papel global ADMIN ou operação sobre um subrole protegido |
+| `403 Forbidden` | Usuário sem autorização para a operação ou operação sobre um subrole protegido |
 | `404 Not Found` | Recurso necessário à operação não encontrado |
 | `409 Conflict` | Conflito com dados existentes ou referências no banco |
 | `500 Internal Server Error` | Falha interna inesperada |

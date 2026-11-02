@@ -50,7 +50,7 @@ class AssignSubRoleToUserUseCaseTest {
         assertEquals(new MembershipOutputDto(generatedId, target.getId(), staff.getId(), restaurant.getId()), result);
         var captor = ArgumentCaptor.forClass(Membership.class);
         var order = inOrder(permission, users, restaurants, subroles, memberships);
-        order.verify(permission).checkAssignSubRole(actorId);
+        order.verify(permission).checkAssignSubRole(actorId, restaurant.getId());
         order.verify(users).getUserById(target.getId());
         order.verify(restaurants).getRestaurantById(restaurant.getId());
         order.verify(subroles).getById(staff.getId());
@@ -86,7 +86,7 @@ class AssignSubRoleToUserUseCaseTest {
 
     @Test
     void rejectsUnauthorizedActorBeforeAccessingGateways() {
-        doThrow(new NotAllowedException()).when(permission).checkAssignSubRole(actorId);
+        when(permission.checkAssignSubRole(actorId, restaurant.getId())).thenThrow(new NotAllowedException());
         assertThrows(NotAllowedException.class, () -> useCase.assignSubRoleToUser(actorId, input(staff)));
         verifyNoInteractions(users, restaurants, subroles, memberships);
     }
@@ -130,5 +130,38 @@ class AssignSubRoleToUserUseCaseTest {
                 .thenReturn(Optional.of(new Membership(UUID.randomUUID(), target, main, restaurant)));
         assertThrows(ProtectedSubRoleException.class, () -> useCase.assignSubRoleToUser(actorId, input(staff)));
         verify(memberships, never()).save(any());
+    }
+
+    @Test
+    void mainOwnerCannotAssignAdminOrReplaceAdminMembership() {
+        var admin = new SubRole(UUID.randomUUID(), "admin", "Admin",
+                new Role(UUID.randomUUID(), "ADMIN", "Admin"));
+        resourcesExist(admin);
+        assertThrows(ProtectedSubRoleException.class,
+                () -> useCase.assignSubRoleToUser(actorId, input(admin)));
+        resourcesExist(staff);
+        when(memberships.getUserRestaurantMembership(target.getId(), restaurant.getId()))
+                .thenReturn(Optional.of(new Membership(UUID.randomUUID(), target, admin, restaurant)));
+        assertThrows(ProtectedSubRoleException.class,
+                () -> useCase.assignSubRoleToUser(actorId, input(staff)));
+        verify(memberships, never()).save(any());
+    }
+
+    @Test
+    void adminCanAssignAndReplaceMainOwnerPreservingMembershipId() {
+        when(permission.checkAssignSubRole(actorId, restaurant.getId())).thenReturn(true);
+        var main = new SubRole(UUID.randomUUID(), "mainOwner", "Principal", ownerRole);
+        resourcesExist(main);
+        when(memberships.save(any())).thenAnswer(i -> i.getArgument(0));
+        assertEquals(main.getId(), useCase.assignSubRoleToUser(actorId, input(main)).subRoleId());
+
+        var id = UUID.randomUUID();
+        when(memberships.getUserRestaurantMembership(target.getId(), restaurant.getId()))
+                .thenReturn(Optional.of(new Membership(id, target, main, restaurant)));
+        resourcesExist(staff);
+        var result = useCase.assignSubRoleToUser(actorId, input(staff));
+        assertEquals(id, result.id());
+        assertEquals(staff.getId(), result.subRoleId());
+        assertSame(staff, target.getClientSubrole());
     }
 }

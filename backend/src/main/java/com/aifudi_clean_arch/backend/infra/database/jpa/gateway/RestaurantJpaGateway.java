@@ -61,6 +61,7 @@ public class RestaurantJpaGateway implements RestaurantGateway {
     @Transactional
     public boolean delete(UUID id) {
         try {
+            membershipRepository.deleteByRestaurantId(id);
             return repository.deleteByIdReturningCount(id) > 0;
         } catch (DataAccessException ex) {
             throw new ErrorOnRepositoryAccess("Error deleting restaurant: " + id, ex);

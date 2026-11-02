@@ -1,2556 +1,2802 @@
 {
-	"info": {
-		"_postman_id": "3e0704f0-579d-4752-bf86-8ff1f2aa0a9c",
-		"name": "Aifudi-Clean-Arch",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "8513640"
-	},
-	"item": [
-		{
-			"name": "Tipo de usuário (subroles)",
-			"item": [
-				{
-					"name": "Buscar tipo de usuário por ID",
-					"item": [
-						{
-							"name": "Get Admin Subrole",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Consulta retornou 200\", () => {\n    pm.response.to.have.status(200);\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}/{{STARTED_SUBROLE_ID}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									],
-									"path": [
-										"{{STARTED_SUBROLE_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get SubRole - Error - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Consulta não permitida\", () => {\n    pm.response.to.have.status(403);\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "carlaoliveira",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "carla123",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}/{{STARTED_SUBROLE_ID}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									],
-									"path": [
-										"{{STARTED_SUBROLE_ID}}"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Criar tipo de usuário",
-					"item": [
-						{
-							"name": "Create SubRole",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Tipo de Usário criado com sucesso\", () => {\n    pm.response.to.have.status(201)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"CREATED_SUBROLE_ID\", resp.id);"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"value\":\"manager\",\n    \"label\":\"Manager\",\n    \"roleId\": \"00000000-0000-4000-8000-000000000002\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Subrole - Error - Already Exists",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Erro ao criar tipo de usuário que já existe\", () => {\n    pm.response.to.have.status(409)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"value\":\"manager\",\n    \"label\":\"Manager\",\n    \"roleId\": \"00000000-0000-4000-8000-000000000001\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create SubRole - Error - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Erro de permissão ao criar tipo de usuário\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "carlaoliveira",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "carla123",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"value\":\"chef\",\n    \"label\": \"Chef\",\n    \"roleId\": \"00000000-0000-4000-8000-000000000002\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Atualizar tipo de usuário",
-					"item": [
-						{
-							"name": "Atualizar tipo de usuário",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Atualizado com sucesso\", () => {\n    pm.response.to.have.status(200)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"CREATED_SUBROLE_ID\", resp.id)"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"value\":\"restaurant-admin\",\n    \"label\": \"Restaurant Administrator\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}/{{CREATED_SUBROLE_ID}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									],
-									"path": [
-										"{{CREATED_SUBROLE_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Erro - Tipo não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Recurso não encontrado\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"value\":\"restaurant-admin\",\n    \"label\": \"Restaurant Administrator\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}/59918be7-ea08-448b-b973-43a06042761d",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									],
-									"path": [
-										"59918be7-ea08-448b-b973-43a06042761d"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Deletar tipo de usuário",
-					"item": [
-						{
-							"name": "Erro - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Erro de permissão ao deletar tipo de usuário\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{STARTED_OWNER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{STARTED_OWNER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}/{{CREATED_SUBROLE_ID}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									],
-									"path": [
-										"{{CREATED_SUBROLE_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Deletar Tipo de Usuário",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Tipo de usuário deletado\", () => {\n    pm.response.to.have.status(204)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}/{{CREATED_SUBROLE_ID}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									],
-									"path": [
-										"{{CREATED_SUBROLE_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Erro - Tipo não econtrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Tipo de usuário não econtrado\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{SUBROLE_URL}}/{{CREATED_SUBROLE_ID}}",
-									"host": [
-										"{{BASEURL}}{{SUBROLE_URL}}"
-									],
-									"path": [
-										"{{CREATED_SUBROLE_ID}}"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Atribuir subrole (assign)",
-					"description": "POST /v1/subroles/assign; exclusivo de ADMIN. Configure BASEURL e execute na ordem. Variáveis ASSIGN_* usam o seed: Diego + mainUser + restaurante do Bruno. A primeira chamada pode criar ou atualizar o vínculo; a segunda confirma que o ID foi preservado. O perfil global do usuário não muda. mainOwner não pode ser atribuído nem substituído. ASSIGNED_MEMBERSHIP_ID é salvo na coleção; evite sobrescrevê-lo no ambiente. Independente de CREATED_SUBROLE_ID, que pode ter sido excluído pelas outras pastas.",
-					"item": [
-						{
-							"name": "Assign Subrole",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Subrole atribuído com sucesso\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Vínculo corresponde à atribuição solicitada\", () => {\n    const resp = pm.response.json()\n    pm.expect(resp.id).to.be.a(\"string\").and.not.empty;\n    pm.expect(resp.userId).to.eql(pm.variables.get(\"ASSIGN_USER_ID\"));\n    pm.expect(resp.subRoleId).to.eql(pm.variables.get(\"ASSIGN_SUBROLE_ID\"));\n    pm.expect(resp.restaurantId).to.eql(pm.variables.get(\"ASSIGN_RESTAURANT_ID\"))\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"ASSIGNED_MEMBERSHIP_ID\", resp.id);"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": "Cria ou atualiza o vínculo e salva ASSIGNED_MEMBERSHIP_ID. O padrão reaplica mainUser a Diego no restaurante do Bruno, preservando o perfil global e as permissões do seed."
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Repetir atribuição preserva ID",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Vínculo corresponde à atribuição solicitada\", () => {\n    const resp = pm.response.json()\n    pm.expect(resp.id).to.be.a(\"string\").and.not.empty;\n    pm.expect(resp.userId).to.eql(pm.variables.get(\"ASSIGN_USER_ID\"));\n    pm.expect(resp.subRoleId).to.eql(pm.variables.get(\"ASSIGN_SUBROLE_ID\"));\n    pm.expect(resp.restaurantId).to.eql(pm.variables.get(\"ASSIGN_RESTAURANT_ID\"))\n})\npm.test(\"Preservou o ID do vínculo\", () => {\n    pm.expect(pm.response.json().id).to.eql(pm.variables.get(\"ASSIGNED_MEMBERSHIP_ID\"))\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": "Execute após Assign Subrole. A repetição deve atualizar o mesmo vínculo, sem criar outro."
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - Usuário não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"00000000-0000-4000-8000-ffffffffffff\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - Subrole não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"00000000-0000-4000-8000-ffffffffffff\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - Restaurante não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"00000000-0000-4000-8000-ffffffffffff\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - Campo obrigatório ausente",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - UUID inválido",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"id-invalido\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - Atribuir mainOwner",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_MAINOWNER_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - Substituir proprietário principal",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_MAINOWNER_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - Permissão de proprietário",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{ASSIGN_OWNER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{ASSIGN_OWNER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Assign Subrole - Erro - Sem autenticação",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 401\", () => {\n    pm.response.to.have.status(401)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASEURL}}/v1/subroles/assign",
-									"host": [
-										"{{BASEURL}}"
-									],
-									"path": [
-										"v1",
-										"subroles",
-										"assign"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "noauth"
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Itens do cardápio (menu-items)",
-			"description": "Execute as pastas na ordem: criar, buscar, atualizar e deletar. As requisições de sucesso herdam a autenticação ADMIN da coleção. Configure BASEURL; MENUITEM_RESTAURANT_ID usa o restaurante do Bruno no seed. Os cenários de permissão usam um usuário comum do seed. CREATED_MENUITEM_ID é salvo automaticamente na criação; não o sobrescreva no ambiente. A execução cria e exclui somente o item gerado nesta pasta.",
-			"item": [
-				{
-					"name": "Criar item do cardápio",
-					"item": [
-						{
-							"name": "Create MenuItem",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Item do cardápio criado com sucesso\", () => {\n    pm.response.to.have.status(200)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"CREATED_MENUITEM_ID\", resp.id);"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									]
-								},
-								"description": "Cria um item e salva CREATED_MENUITEM_ID. Requer ADMIN ou proprietário do restaurante. A API retorna 200 na criação.",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Cheeseburger\",\n    \"description\": \"Hambúrguer com queijo e salada\",\n    \"price\": 29.9,\n    \"has_delivery\": true,\n    \"picture\": \"https://example.com/cheeseburger.jpg\",\n    \"restaurantId\": \"{{MENUITEM_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create MenuItem - Erro - Preço inválido",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Cheeseburger\",\n    \"description\": \"Hambúrguer com queijo e salada\",\n    \"price\": 0,\n    \"has_delivery\": true,\n    \"picture\": \"https://example.com/cheeseburger.jpg\",\n    \"restaurantId\": \"{{MENUITEM_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create MenuItem - Erro - Restaurante não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Cheeseburger\",\n    \"description\": \"Hambúrguer com queijo e salada\",\n    \"price\": 29.9,\n    \"has_delivery\": true,\n    \"picture\": \"https://example.com/cheeseburger.jpg\",\n    \"restaurantId\": \"00000000-0000-4000-8000-ffffffffffff\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create MenuItem - Erro - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Cheeseburger\",\n    \"description\": \"Hambúrguer com queijo e salada\",\n    \"price\": 29.9,\n    \"has_delivery\": true,\n    \"picture\": \"https://example.com/cheeseburger.jpg\",\n    \"restaurantId\": \"{{MENUITEM_RESTAURANT_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{MENUITEM_USER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{MENUITEM_USER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Buscar item por ID",
-					"item": [
-						{
-							"name": "Get MenuItem",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Retornou o item solicitado\", () => {\n    pm.expect(pm.response.json().id).to.eql(pm.variables.get(\"CREATED_MENUITEM_ID\"))\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Get MenuItem - Usuário comum",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{MENUITEM_USER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{MENUITEM_USER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get MenuItem - Erro - Não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/00000000-0000-4000-8000-ffffffffffff",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"00000000-0000-4000-8000-ffffffffffff"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Get MenuItem - Erro - Sem autenticação",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 401\", () => {\n    pm.response.to.have.status(401)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "noauth"
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Atualizar item do cardápio",
-					"item": [
-						{
-							"name": "Update MenuItem",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": "Atualização parcial: campos omitidos são preservados.",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Cheeseburger especial\",\n    \"price\": 34.9,\n    \"has_delivery\": false\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update MenuItem - Erro - Preço inválido",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"price\": -1\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update MenuItem - Erro - Não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/00000000-0000-4000-8000-ffffffffffff",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"00000000-0000-4000-8000-ffffffffffff"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"price\": 34.9\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update MenuItem - Erro - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"price\": 34.9\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{MENUITEM_USER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{MENUITEM_USER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Deletar item do cardápio",
-					"item": [
-						{
-							"name": "Delete MenuItem - Erro - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{MENUITEM_USER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{MENUITEM_USER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete MenuItem",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 204\", () => {\n    pm.response.to.have.status(204)\n})\npm.test(\"Resposta sem corpo\", () => {\n    pm.expect(pm.response.text()).to.eql(\"\")\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Get MenuItem - Após exclusão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Delete MenuItem - Erro - Não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
-									"host": [
-										"{{BASEURL}}{{MENUITEM_URL}}"
-									],
-									"path": [
-										"{{CREATED_MENUITEM_ID}}"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Restaurantes (CRUD)",
-			"description": "Configure BASEURL e execute criar → buscar → atualizar → deletar. Herda ADMIN da coleção; o cenário de proprietário usa Bruno e os erros de permissão usam Diego, ambos do seed. O ID criado é salvo em CREATED_RESTAURANT_ID; não o sobrescreva no ambiente. DELETE retorna 200 sem corpo somente quando não existem dependências. Como POST /register cria automaticamente um vínculo mainOwner e não há endpoint para removê-lo, o cenário de exclusão espera 409. Esta pasta deixa um restaurante criado no banco a cada execução completa.",
-			"item": [
-				{
-					"name": "Criar restaurante",
-					"item": [
-						{
-							"name": "Create Restaurant",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Restaurante criado com sucesso\", () => {\n    pm.response.to.have.status(200)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"CREATED_RESTAURANT_ID\", resp.id);"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"register"
-									]
-								},
-								"description": "Cria o restaurante e o vínculo mainOwner; salva CREATED_RESTAURANT_ID. Requer ADMIN ou OWNER. A criação retorna 200.",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"ownerId\": \"{{RESTAURANT_OWNER_ID}}\",\n    \"name\": \"Restaurante Postman\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Restaurant - Erro - Nome vazio",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"register"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"ownerId\": \"{{RESTAURANT_OWNER_ID}}\",\n    \"name\": \"\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Restaurant - Erro - Cozinha não encontrada",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"register"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"ownerId\": \"{{RESTAURANT_OWNER_ID}}\",\n    \"name\": \"Restaurante Postman\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"00000000-0000-4000-8000-ffffffffffff\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Restaurant - Erro - Proprietário não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"register"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"ownerId\": \"00000000-0000-4000-8000-ffffffffffff\",\n    \"name\": \"Restaurante Postman\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Restaurant - Erro - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"register"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{RESTAURANT_USER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{RESTAURANT_USER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								},
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"ownerId\": \"{{RESTAURANT_OWNER_ID}}\",\n    \"name\": \"Restaurante Postman\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Buscar restaurante por ID",
-					"item": [
-						{
-							"name": "Get Restaurant",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Retornou o restaurante solicitado e suas coleções\", () => {\n    const resp = pm.response.json()\n    pm.expect(resp.id).to.eql(pm.variables.get(\"CREATED_RESTAURANT_ID\"));\n    pm.expect(resp.membershipIds).to.be.an(\"array\");\n    pm.expect(resp.menuItemsIdList).to.be.an(\"array\")\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Get Restaurant - Usuário comum",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{RESTAURANT_USER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{RESTAURANT_USER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get Restaurant - Erro - Não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/00000000-0000-4000-8000-ffffffffffff",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"00000000-0000-4000-8000-ffffffffffff"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Get Restaurant - Erro - Sem autenticação",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 401\", () => {\n    pm.response.to.have.status(401)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "noauth"
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Atualizar restaurante",
-					"item": [
-						{
-							"name": "Update Restaurant",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Nome atualizado\", () => {\n    pm.expect(pm.response.json().name).to.eql(\"Restaurante Postman atualizado\")\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Restaurante Postman atualizado\",\n    \"address\": \"Rua das Flores, 200, Salvador - BA\",\n    \"openingTime\": \"12:00 - 23:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update Restaurant - Proprietário - Atualização parcial",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "Altera apenas o horário, autenticando o proprietário definido na criação. Os demais campos são preservados.",
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{RESTAURANT_OWNER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{RESTAURANT_OWNER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								},
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"openingTime\": \"18:00 - 23:00\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update Restaurant - Erro - Nome muito longo",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update Restaurant - Erro - Cozinha não encontrada",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"kitchenId\": \"00000000-0000-4000-8000-ffffffffffff\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update Restaurant - Erro - Não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/00000000-0000-4000-8000-ffffffffffff",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"00000000-0000-4000-8000-ffffffffffff"
-									]
-								},
-								"description": "",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Restaurante atualizado\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update Restaurant - Erro - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{RESTAURANT_USER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{RESTAURANT_USER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								},
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Alteração não autorizada\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Deletar restaurante",
-					"item": [
-						{
-							"name": "Delete Restaurant - Erro - Permissão",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "",
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{RESTAURANT_USER_LOGIN}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{RESTAURANT_USER_PASSWORD}}",
-											"type": "string"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Restaurant - Erro - Vínculo existente",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 409\", () => {\n    pm.response.to.have.status(409)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": "O cadastro cria um membership mainOwner. A chave estrangeira impede excluir o restaurante enquanto houver vínculos ou itens. O restaurante permanece cadastrado."
-							},
-							"response": []
-						},
-						{
-							"name": "Get Restaurant - Preservado após conflito",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"{{CREATED_RESTAURANT_ID}}"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Restaurant - Erro - Não encontrado",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{BASEURL}}{{RESTAURANT_URL}}/00000000-0000-4000-8000-ffffffffffff",
-									"host": [
-										"{{BASEURL}}{{RESTAURANT_URL}}"
-									],
-									"path": [
-										"00000000-0000-4000-8000-ffffffffffff"
-									]
-								},
-								"description": ""
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		}
-	],
-	"auth": {
-		"type": "basic",
-		"basic": [
-			{
-				"key": "username",
-				"value": "admin",
-				"type": "string"
-			},
-			{
-				"key": "password",
-				"value": "admin123",
-				"type": "string"
-			}
-		]
-	},
-	"variable": [
-		{
-			"key": "BASEURL",
-			"value": ""
-		},
-		{
-			"key": "STARTED_SUBROLE_ID",
-			"value": ""
-		},
-		{
-			"key": "SUBROLE_URL",
-			"value": ""
-		},
-		{
-			"key": "CREATED_SUBROLE_ID",
-			"value": ""
-		},
-		{
-			"key": "STARTED_OWNER_LOGIN",
-			"value": ""
-		},
-		{
-			"key": "STARTED_OWNER_PASSWORD",
-			"value": ""
-		},
-		{
-			"value": ""
-		},
-		{
-			"key": "MENUITEM_URL",
-			"value": "/v1/menuitems",
-			"type": "string"
-		},
-		{
-			"key": "MENUITEM_RESTAURANT_ID",
-			"value": "00000000-0000-4000-8000-000000000301",
-			"type": "string"
-		},
-		{
-			"key": "CREATED_MENUITEM_ID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "MENUITEM_USER_LOGIN",
-			"value": "diegosouza",
-			"type": "string"
-		},
-		{
-			"key": "MENUITEM_USER_PASSWORD",
-			"value": "diego123",
-			"type": "string"
-		},
-		{
-			"key": "RESTAURANT_URL",
-			"value": "/v1/restaurants",
-			"type": "string"
-		},
-		{
-			"key": "CREATED_RESTAURANT_ID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "RESTAURANT_OWNER_ID",
-			"value": "00000000-0000-4000-8000-000000000102",
-			"type": "string"
-		},
-		{
-			"key": "RESTAURANT_KITCHEN_ID",
-			"value": "00000000-0000-4000-8000-000000000203",
-			"type": "string"
-		},
-		{
-			"key": "RESTAURANT_OWNER_LOGIN",
-			"value": "brunosantos",
-			"type": "string"
-		},
-		{
-			"key": "RESTAURANT_OWNER_PASSWORD",
-			"value": "bruno123",
-			"type": "string"
-		},
-		{
-			"key": "RESTAURANT_USER_LOGIN",
-			"value": "diegosouza",
-			"type": "string"
-		},
-		{
-			"key": "RESTAURANT_USER_PASSWORD",
-			"value": "diego123",
-			"type": "string"
-		},
-		{
-			"key": "ASSIGN_USER_ID",
-			"value": "00000000-0000-4000-8000-000000000104",
-			"type": "string"
-		},
-		{
-			"key": "ASSIGN_SUBROLE_ID",
-			"value": "00000000-0000-4000-8000-000000000013",
-			"type": "string"
-		},
-		{
-			"key": "ASSIGN_RESTAURANT_ID",
-			"value": "00000000-0000-4000-8000-000000000301",
-			"type": "string"
-		},
-		{
-			"key": "ASSIGNED_MEMBERSHIP_ID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "ASSIGN_MAINOWNER_SUBROLE_ID",
-			"value": "00000000-0000-4000-8000-000000000012",
-			"type": "string"
-		},
-		{
-			"key": "ASSIGN_MAINOWNER_USER_ID",
-			"value": "00000000-0000-4000-8000-000000000102",
-			"type": "string"
-		},
-		{
-			"key": "ASSIGN_OWNER_LOGIN",
-			"value": "brunosantos",
-			"type": "string"
-		},
-		{
-			"key": "ASSIGN_OWNER_PASSWORD",
-			"value": "bruno123",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "113e4c96-5c62-49ce-b030-2bd4e0da85c0",
+    "name": "Aifudi-Clean-Arch Copy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8513640"
+  },
+  "item": [
+    {
+      "name": "Tipo de usuário (subroles)",
+      "item": [
+        {
+          "name": "Buscar tipo de usuário por ID",
+          "item": [
+            {
+              "name": "Get Admin Subrole",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Consulta retornou 200\", () => {\n    pm.response.to.have.status(200);\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/{{STARTED_SUBROLE_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "{{STARTED_SUBROLE_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get SubRole - Error - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Consulta não permitida\", () => {\n    pm.response.to.have.status(403);\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "carlaoliveira",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{auth_password_09g0}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/{{STARTED_SUBROLE_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "{{STARTED_SUBROLE_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Criar tipo de usuário",
+          "item": [
+            {
+              "name": "Create SubRole",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Tipo de Usário criado com sucesso\", () => {\n    pm.response.to.have.status(201)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"CREATED_SUBROLE_ID\", resp.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"value\":\"manager\",\n    \"label\":\"Manager\",\n    \"roleId\": \"00000000-0000-4000-8000-000000000002\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Subrole - Error - Already Exists",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Erro ao criar tipo de usuário que já existe\", () => {\n    pm.response.to.have.status(409)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"value\":\"manager\",\n    \"label\":\"Manager\",\n    \"roleId\": \"00000000-0000-4000-8000-000000000001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create SubRole - Error - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Erro de permissão ao criar tipo de usuário\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "carlaoliveira",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{auth_password_09g0}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"value\":\"chef\",\n    \"label\": \"Chef\",\n    \"roleId\": \"00000000-0000-4000-8000-000000000002\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Atualizar tipo de usuário",
+          "item": [
+            {
+              "name": "Atualizar tipo de usuário",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Atualizado com sucesso\", () => {\n    pm.response.to.have.status(200)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"CREATED_SUBROLE_ID\", resp.id)"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"value\":\"restaurant-admin\",\n    \"label\": \"Restaurant Administrator\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/{{CREATED_SUBROLE_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_SUBROLE_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Erro - Tipo não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Recurso não encontrado\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"value\":\"restaurant-admin\",\n    \"label\": \"Restaurant Administrator\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/59918be7-ea08-448b-b973-43a06042761d",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "59918be7-ea08-448b-b973-43a06042761d"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Deletar tipo de usuário",
+          "item": [
+            {
+              "name": "Erro - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Erro de permissão ao deletar tipo de usuário\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{STARTED_OWNER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{STARTED_OWNER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/{{CREATED_SUBROLE_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_SUBROLE_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Deletar Tipo de Usuário",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Tipo de usuário deletado\", () => {\n    pm.response.to.have.status(204)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/{{CREATED_SUBROLE_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_SUBROLE_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Erro - Tipo não econtrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Tipo de usuário não econtrado\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/{{CREATED_SUBROLE_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_SUBROLE_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Atribuir subrole (assign)",
+          "item": [
+            {
+              "name": "Assign Subrole",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Subrole atribuído com sucesso\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Vínculo corresponde à atribuição solicitada\", () => {\n    const resp = pm.response.json()\n    pm.expect(resp.id).to.be.a(\"string\").and.not.empty;\n    pm.expect(resp.userId).to.eql(pm.variables.get(\"ASSIGN_USER_ID\"));\n    pm.expect(resp.subRoleId).to.eql(pm.variables.get(\"ASSIGN_SUBROLE_ID\"));\n    pm.expect(resp.restaurantId).to.eql(pm.variables.get(\"ASSIGN_RESTAURANT_ID\"))\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"ASSIGNED_MEMBERSHIP_ID\", resp.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                },
+                "description": "Cria ou atualiza o vínculo e salva ASSIGNED_MEMBERSHIP_ID. O padrão reaplica mainUser a Diego no restaurante do Bruno, preservando o perfil global e as permissões do seed."
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Repetir atribuição preserva ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Vínculo corresponde à atribuição solicitada\", () => {\n    const resp = pm.response.json()\n    pm.expect(resp.id).to.be.a(\"string\").and.not.empty;\n    pm.expect(resp.userId).to.eql(pm.variables.get(\"ASSIGN_USER_ID\"));\n    pm.expect(resp.subRoleId).to.eql(pm.variables.get(\"ASSIGN_SUBROLE_ID\"));\n    pm.expect(resp.restaurantId).to.eql(pm.variables.get(\"ASSIGN_RESTAURANT_ID\"))\n})\npm.test(\"Preservou o ID do vínculo\", () => {\n    pm.expect(pm.response.json().id).to.eql(pm.variables.get(\"ASSIGNED_MEMBERSHIP_ID\"))\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                },
+                "description": "Execute após Assign Subrole. A repetição deve atualizar o mesmo vínculo, sem criar outro."
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - Usuário não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"00000000-0000-4000-8000-ffffffffffff\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - Subrole não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"00000000-0000-4000-8000-ffffffffffff\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - Restaurante não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"00000000-0000-4000-8000-ffffffffffff\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - Campo obrigatório ausente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - UUID inválido",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"id-invalido\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - Atribuir mainOwner",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{ASSIGN_OWNER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{ASSIGN_OWNER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_MAINOWNER_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - Substituir proprietário principal",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{ASSIGN_OWNER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{ASSIGN_OWNER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_MAINOWNER_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - mainOwner no próprio restaurante",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"mainOwner atribuiu subrole no próprio restaurante\", () => {\n    pm.response.to.have.status(200)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"ASSIGNED_MEMBERSHIP_ID\", resp.id);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{ASSIGN_OWNER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{ASSIGN_OWNER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - Sem autenticação",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Resposta retornou 401\", () => {\n    pm.response.to.have.status(401)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - Proprietário de outro restaurante",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Assign Subrole - Erro - Proprietário de outro restaurante\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{ASSIGN_OTHER_OWNER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{ASSIGN_OTHER_OWNER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                },
+                "description": "Carla tenta modificar o restaurante do Bruno; deve ser recusado."
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - Erro - mainOwner atribui ADMIN",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Assign Subrole - Erro - mainOwner atribui ADMIN\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{ASSIGN_OWNER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{ASSIGN_OWNER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_ADMIN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                },
+                "description": "mainOwner não pode conceder papel ADMIN no restaurante."
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - ADMIN atribui mainOwner",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Assign Subrole - ADMIN atribui mainOwner\", () => {\n    pm.response.to.have.status(200)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{auth_password_1dkw}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_MAINOWNER_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                },
+                "description": "ADMIN pode atribuir mainOwner. Execute a próxima requisição para restaurar o vínculo comum de Diego."
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Subrole - ADMIN substitui mainOwner",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Assign Subrole - ADMIN substitui mainOwner\", () => {\n    pm.response.to.have.status(200)\n})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{auth_password_1dkw}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"userId\": \"{{ASSIGN_USER_ID}}\",\n    \"subRoleId\": \"{{ASSIGN_SUBROLE_ID}}\",\n    \"restaurantId\": \"{{ASSIGN_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{SUBROLE_URL}}/assign",
+                  "host": [
+                    "{{BASEURL}}{{SUBROLE_URL}}"
+                  ],
+                  "path": [
+                    "assign"
+                  ]
+                },
+                "description": "Restaura o subrole comum de Diego após o cenário anterior, preservando seu perfil global."
+              },
+              "response": []
+            }
+          ],
+          "description": "ADMIN pode atribuir qualquer subrole. mainOwner só atribui no próprio restaurante, sem atribuir ou substituir vínculos ADMIN/mainOwner. Execute em ordem; os dois últimos cenários atribuem mainOwner a Diego e restauram mainUser. As variáveis usam o seed (Bruno proprietário, Carla de outro restaurante). Não sobrescreva ASSIGNED_MEMBERSHIP_ID no ambiente."
+        }
+      ]
+    },
+    {
+      "name": "Itens do cardápio (menu-items)",
+      "item": [
+        {
+          "name": "Criar item do cardápio",
+          "item": [
+            {
+              "name": "Create MenuItem",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Item do cardápio criado com sucesso\", () => {\n    pm.response.to.have.status(200)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"CREATED_MENUITEM_ID\", resp.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Cheeseburger\",\n    \"description\": \"Hambúrguer com queijo e salada\",\n    \"price\": 29.9,\n    \"has_delivery\": true,\n    \"picture\": \"https://example.com/cheeseburger.jpg\",\n    \"restaurantId\": \"{{MENUITEM_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ]
+                },
+                "description": "Cria um item e salva CREATED_MENUITEM_ID. Requer ADMIN ou proprietário do restaurante. A API retorna 200 na criação."
+              },
+              "response": []
+            },
+            {
+              "name": "Create MenuItem - Erro - Preço inválido",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Cheeseburger\",\n    \"description\": \"Hambúrguer com queijo e salada\",\n    \"price\": 0,\n    \"has_delivery\": true,\n    \"picture\": \"https://example.com/cheeseburger.jpg\",\n    \"restaurantId\": \"{{MENUITEM_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create MenuItem - Erro - Restaurante não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Cheeseburger\",\n    \"description\": \"Hambúrguer com queijo e salada\",\n    \"price\": 29.9,\n    \"has_delivery\": true,\n    \"picture\": \"https://example.com/cheeseburger.jpg\",\n    \"restaurantId\": \"00000000-0000-4000-8000-ffffffffffff\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create MenuItem - Erro - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{MENUITEM_USER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{MENUITEM_USER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Cheeseburger\",\n    \"description\": \"Hambúrguer com queijo e salada\",\n    \"price\": 29.9,\n    \"has_delivery\": true,\n    \"picture\": \"https://example.com/cheeseburger.jpg\",\n    \"restaurantId\": \"{{MENUITEM_RESTAURANT_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Buscar item por ID",
+          "item": [
+            {
+              "name": "Get MenuItem",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Retornou o item solicitado\", () => {\n    pm.expect(pm.response.json().id).to.eql(pm.variables.get(\"CREATED_MENUITEM_ID\"))\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get MenuItem - Usuário comum",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{MENUITEM_USER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{MENUITEM_USER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get MenuItem - Erro - Não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/00000000-0000-4000-8000-ffffffffffff",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "00000000-0000-4000-8000-ffffffffffff"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get MenuItem - Erro - Sem autenticação",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 401\", () => {\n    pm.response.to.have.status(401)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Atualizar item do cardápio",
+          "item": [
+            {
+              "name": "Update MenuItem",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Cheeseburger especial\",\n    \"price\": 34.9,\n    \"has_delivery\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                },
+                "description": "Atualização parcial: campos omitidos são preservados."
+              },
+              "response": []
+            },
+            {
+              "name": "Update MenuItem - Erro - Preço inválido",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"price\": -1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update MenuItem - Erro - Não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"price\": 34.9\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/00000000-0000-4000-8000-ffffffffffff",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "00000000-0000-4000-8000-ffffffffffff"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update MenuItem - Erro - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{MENUITEM_USER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{MENUITEM_USER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"price\": 34.9\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update MenuItem - Erro - Sem permissão no destino",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{RESTAURANT_OWNER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{RESTAURANT_OWNER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"restaurantId\": \"00000000-0000-4000-8000-000000000302\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Deletar item do cardápio",
+          "item": [
+            {
+              "name": "Delete MenuItem - Erro - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{MENUITEM_USER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{MENUITEM_USER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete MenuItem",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 204\", () => {\n    pm.response.to.have.status(204)\n})\npm.test(\"Resposta sem corpo\", () => {\n    pm.expect(pm.response.text()).to.eql(\"\")\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get MenuItem - Após exclusão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete MenuItem - Erro - Não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{MENUITEM_URL}}/{{CREATED_MENUITEM_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{MENUITEM_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_MENUITEM_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "Execute as pastas na ordem: criar, buscar, atualizar e deletar. As requisições de sucesso herdam a autenticação ADMIN da coleção. Configure BASEURL; MENUITEM_RESTAURANT_ID usa o restaurante do Bruno no seed. Os cenários de permissão usam um usuário comum do seed. CREATED_MENUITEM_ID é salvo automaticamente na criação; não o sobrescreva no ambiente. A execução cria e exclui somente o item gerado nesta pasta."
+    },
+    {
+      "name": "Restaurantes (CRUD)",
+      "item": [
+        {
+          "name": "Criar restaurante",
+          "item": [
+            {
+              "name": "Create Restaurant",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Restaurante criado com sucesso\", () => {\n    pm.response.to.have.status(200)\n})\n\nconst resp = pm.response.json()\npm.collectionVariables.set(\"CREATED_RESTAURANT_ID\", resp.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ownerId\": \"{{RESTAURANT_OWNER_ID}}\",\n    \"name\": \"Restaurante Postman\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "register"
+                  ]
+                },
+                "description": "Cria o restaurante e o vínculo mainOwner; salva CREATED_RESTAURANT_ID. Requer ADMIN ou OWNER. A criação retorna 200."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Restaurant - Erro - Nome vazio",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ownerId\": \"{{RESTAURANT_OWNER_ID}}\",\n    \"name\": \"\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Restaurant - Erro - Cozinha não encontrada",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ownerId\": \"{{RESTAURANT_OWNER_ID}}\",\n    \"name\": \"Restaurante Postman\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"00000000-0000-4000-8000-ffffffffffff\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Restaurant - Erro - Proprietário não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ownerId\": \"00000000-0000-4000-8000-ffffffffffff\",\n    \"name\": \"Restaurante Postman\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Restaurant - Erro - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{RESTAURANT_USER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{RESTAURANT_USER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"ownerId\": \"{{RESTAURANT_OWNER_ID}}\",\n    \"name\": \"Restaurante Postman\",\n    \"address\": \"Rua das Flores, 100, Salvador - BA\",\n    \"openingTime\": \"11:00 - 22:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/register",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Buscar restaurante por ID",
+          "item": [
+            {
+              "name": "Get Restaurant",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Retornou o restaurante solicitado e suas coleções\", () => {\n    const resp = pm.response.json()\n    pm.expect(resp.id).to.eql(pm.variables.get(\"CREATED_RESTAURANT_ID\"));\n    pm.expect(resp.membershipIds).to.be.an(\"array\");\n    pm.expect(resp.menuItemsIdList).to.be.an(\"array\")\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Restaurant - Usuário comum",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{RESTAURANT_USER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{RESTAURANT_USER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Restaurant - Erro - Não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/00000000-0000-4000-8000-ffffffffffff",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "00000000-0000-4000-8000-ffffffffffff"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Restaurant - Erro - Sem autenticação",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 401\", () => {\n    pm.response.to.have.status(401)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Atualizar restaurante",
+          "item": [
+            {
+              "name": "Update Restaurant",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})\npm.test(\"Nome atualizado\", () => {\n    pm.expect(pm.response.json().name).to.eql(\"Restaurante Postman atualizado\")\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Restaurante Postman atualizado\",\n    \"address\": \"Rua das Flores, 200, Salvador - BA\",\n    \"openingTime\": \"12:00 - 23:00\",\n    \"kitchenId\": \"{{RESTAURANT_KITCHEN_ID}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Restaurant - Proprietário - Atualização parcial",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{RESTAURANT_OWNER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{RESTAURANT_OWNER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"openingTime\": \"18:00 - 23:00\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                },
+                "description": "Altera apenas o horário, autenticando o proprietário definido na criação. Os demais campos são preservados."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Restaurant - Erro - Nome muito longo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 400\", () => {\n    pm.response.to.have.status(400)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Restaurant - Erro - Cozinha não encontrada",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"kitchenId\": \"00000000-0000-4000-8000-ffffffffffff\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Restaurant - Erro - Não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Restaurante atualizado\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/00000000-0000-4000-8000-ffffffffffff",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "00000000-0000-4000-8000-ffffffffffff"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Restaurant - Erro - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{RESTAURANT_USER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{RESTAURANT_USER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Alteração não autorizada\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Deletar restaurante",
+          "item": [
+            {
+              "name": "Delete Restaurant - Erro - Permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 403\", () => {\n    pm.response.to.have.status(403)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{RESTAURANT_USER_LOGIN}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{RESTAURANT_USER_PASSWORD}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Restaurant - Remove vínculos",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 200\", () => {\n    pm.response.to.have.status(200)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                },
+                "description": "Exclui o restaurante sem itens e remove seus vínculos na mesma transação."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Restaurant - Após exclusão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/{{CREATED_RESTAURANT_ID}}",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "{{CREATED_RESTAURANT_ID}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Restaurant - Erro - Não encontrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Resposta retornou 404\", () => {\n    pm.response.to.have.status(404)\n})"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASEURL}}{{RESTAURANT_URL}}/00000000-0000-4000-8000-ffffffffffff",
+                  "host": [
+                    "{{BASEURL}}{{RESTAURANT_URL}}"
+                  ],
+                  "path": [
+                    "00000000-0000-4000-8000-ffffffffffff"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "Configure BASEURL e execute criar → buscar → atualizar → deletar. Herda ADMIN da coleção; o cenário de proprietário usa Bruno e os erros de permissão usam Diego, ambos do seed. O ID criado é salvo em CREATED_RESTAURANT_ID; não o sobrescreva no ambiente. DELETE retorna 200 sem corpo somente quando não existem dependências. Como POST /register cria automaticamente um vínculo mainOwner e não há endpoint para removê-lo, o cenário de exclusão espera 409. Esta pasta deixa um restaurante criado no banco a cada execução completa."
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "admin",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{auth_password_1dkw}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "BASEURL",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "STARTED_SUBROLE_ID",
+      "value": "00000000-0000-4000-8000-000000000011"
+    },
+    {
+      "key": "SUBROLE_URL",
+      "value": "/v1/subroles"
+    },
+    {
+      "key": "CREATED_SUBROLE_ID",
+      "value": ""
+    },
+    {
+      "key": "STARTED_OWNER_LOGIN",
+      "value": "brunosantos"
+    },
+    {
+      "key": "STARTED_OWNER_PASSWORD",
+      "value": "bruno123"
+    },
+    {
+      "key": "MENUITEM_URL",
+      "value": "/v1/menuitems"
+    },
+    {
+      "key": "MENUITEM_RESTAURANT_ID",
+      "value": "00000000-0000-4000-8000-000000000301"
+    },
+    {
+      "key": "CREATED_MENUITEM_ID",
+      "value": ""
+    },
+    {
+      "key": "MENUITEM_USER_LOGIN",
+      "value": "diegosouza"
+    },
+    {
+      "key": "MENUITEM_USER_PASSWORD",
+      "value": "diego123"
+    },
+    {
+      "key": "RESTAURANT_URL",
+      "value": "/v1/restaurants"
+    },
+    {
+      "key": "CREATED_RESTAURANT_ID",
+      "value": ""
+    },
+    {
+      "key": "RESTAURANT_OWNER_ID",
+      "value": "00000000-0000-4000-8000-000000000102"
+    },
+    {
+      "key": "RESTAURANT_KITCHEN_ID",
+      "value": "00000000-0000-4000-8000-000000000203"
+    },
+    {
+      "key": "RESTAURANT_OWNER_LOGIN",
+      "value": "brunosantos"
+    },
+    {
+      "key": "RESTAURANT_OWNER_PASSWORD",
+      "value": "bruno123"
+    },
+    {
+      "key": "RESTAURANT_USER_LOGIN",
+      "value": "diegosouza"
+    },
+    {
+      "key": "RESTAURANT_USER_PASSWORD",
+      "value": "diego123"
+    },
+    {
+      "key": "ASSIGN_USER_ID",
+      "value": "00000000-0000-4000-8000-000000000104"
+    },
+    {
+      "key": "ASSIGN_SUBROLE_ID",
+      "value": "00000000-0000-4000-8000-000000000013"
+    },
+    {
+      "key": "ASSIGN_RESTAURANT_ID",
+      "value": "00000000-0000-4000-8000-000000000301"
+    },
+    {
+      "key": "ASSIGNED_MEMBERSHIP_ID",
+      "value": ""
+    },
+    {
+      "key": "ASSIGN_MAINOWNER_SUBROLE_ID",
+      "value": "00000000-0000-4000-8000-000000000012"
+    },
+    {
+      "key": "ASSIGN_MAINOWNER_USER_ID",
+      "value": "00000000-0000-4000-8000-000000000102"
+    },
+    {
+      "key": "ASSIGN_OWNER_LOGIN",
+      "value": "brunosantos"
+    },
+    {
+      "key": "ASSIGN_OWNER_PASSWORD",
+      "value": "bruno123"
+    },
+    {
+      "key": "ASSIGN_OTHER_OWNER_LOGIN",
+      "value": "carlaoliveira"
+    },
+    {
+      "key": "ASSIGN_OTHER_OWNER_PASSWORD",
+      "value": "carla123"
+    },
+    {
+      "key": "ASSIGN_ADMIN_SUBROLE_ID",
+      "value": "00000000-0000-4000-8000-000000000011"
+    },
+    {
+      "key": "auth_password_1dkw",
+      "value": "admin123",
+      "secret": true
+    },
+    {
+      "key": "auth_password_09g0",
+      "value": "carla123",
+      "secret": true
+    }
+  ]
 }

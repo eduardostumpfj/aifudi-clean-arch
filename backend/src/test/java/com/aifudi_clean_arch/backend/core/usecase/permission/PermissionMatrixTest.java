@@ -46,13 +46,13 @@ class PermissionMatrixTest {
                 assertDoesNotThrow(() -> types.checkUpdateSubRole(id));
                 assertDoesNotThrow(() -> types.checkDeleteSubRole(id));
                 assertDoesNotThrow(() -> types.checkGetSubRole(id));
-                assertDoesNotThrow(() -> types.checkAssignSubRole(id));
+                assertDoesNotThrow(() -> types.checkAssignSubRole(id, UUID.randomUUID()));
             } else {
                 assertThrows(NotAllowedException.class, () -> types.checkCreateSubRole(id));
                 assertThrows(NotAllowedException.class, () -> types.checkUpdateSubRole(id));
                 assertThrows(NotAllowedException.class, () -> types.checkDeleteSubRole(id));
                 assertThrows(NotAllowedException.class, () -> types.checkGetSubRole(id));
-                assertThrows(NotAllowedException.class, () -> types.checkAssignSubRole(id));
+                assertThrows(NotAllowedException.class, () -> types.checkAssignSubRole(id, UUID.randomUUID()));
             }
         }
     }
@@ -115,5 +115,25 @@ class PermissionMatrixTest {
 
         verify(items).getById(itemId);
         verifyNoInteractions(users, memberships);
+    }
+
+    @Test
+    void onlyMainOwnerCanAssignWithinTheirRestaurantAndAdminBypassesMembership() {
+        var actor = user("OWNER");
+        var restaurant = new Restaurant(UUID.randomUUID(), "Restaurant", "Address", "09:00",
+                new Kitchen(UUID.randomUUID(), "type", "Type"), Set.of(), Set.of());
+        var main = new SubRole(UUID.randomUUID(), "mainOwner", "Principal",
+                new Role(UUID.randomUUID(), "OWNER", "Owner"));
+        when(memberships.getUserRestaurantMembership(actor.getId(), restaurant.getId()))
+                .thenReturn(Optional.of(new Membership(UUID.randomUUID(), actor, main, restaurant)));
+        assertFalse(types.checkAssignSubRole(actor.getId(), restaurant.getId()));
+        assertThrows(NotAllowedException.class,
+                () -> types.checkAssignSubRole(actor.getId(), UUID.randomUUID()));
+        when(memberships.getUserRestaurantMembership(actor.getId(), restaurant.getId()))
+                .thenReturn(Optional.of(new Membership(UUID.randomUUID(), actor, actor.getClientSubrole(), restaurant)));
+        assertThrows(NotAllowedException.class,
+                () -> types.checkAssignSubRole(actor.getId(), restaurant.getId()));
+        assertThrows(NotAllowedException.class, () -> types.checkAssignSubRole(actor.getId(), null));
+        assertTrue(types.checkAssignSubRole(user("ADMIN").getId(), UUID.randomUUID()));
     }
 }

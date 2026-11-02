@@ -10,11 +10,9 @@ import com.aifudi_clean_arch.backend.infra.web.json.UpdateMenuItemJson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ProblemDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +26,11 @@ import java.util.UUID;
 @Tag(name = "Cardápio", description = "Cadastro e gestão dos itens de cardápio.")
 @ApiResponses({
         @ApiResponse(responseCode = "401", description = "Credenciais ausentes ou inválidas",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "403", description = "Operação não permitida",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "500", description = "Erro interno",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
 })
 @RestController
 @RequestMapping("/v1/menuitems")
@@ -44,9 +42,9 @@ public class MenuItemApi {
     @GetMapping("/{id}")
     @Operation(summary = "Consultar item do cardápio", description = "Disponível para usuários autenticados com papel ADMIN, OWNER ou USER.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Item encontrado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "200", description = "Item encontrado", content = @Content),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
     })
     public ResponseEntity<MenuItemOutputDto> getMenuItem(
             @PathVariable UUID id,
@@ -61,13 +59,13 @@ public class MenuItemApi {
     @PostMapping
     @Operation(summary = "Cadastrar item do cardápio", description = "Requer ADMIN ou vínculo de proprietário no restaurante informado.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Item cadastrado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "200", description = "Item cadastrado", content = @Content),
         @ApiResponse(responseCode = "400", description = "Corpo ou parâmetros inválidos",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
     })
     public ResponseEntity<MenuItemOutputDto> createMenuItem(
             @Parameter(hidden = true)
@@ -91,15 +89,15 @@ public class MenuItemApi {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar item do cardápio", description = "Atualiza apenas os campos informados. Requer permissão para gerenciar o item.")
+    @Operation(summary = "Atualizar item do cardápio", description = "Atualiza apenas os campos informados. Requer permissão para gerenciar o item e, ao informar restaurantId, também para gerenciar o restaurante de destino.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Item atualizado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "200", description = "Item atualizado", content = @Content),
         @ApiResponse(responseCode = "400", description = "Corpo ou parâmetros inválidos",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
     })
     public ResponseEntity<MenuItemOutputDto> updateItem(
             @PathVariable UUID id,
@@ -127,9 +125,9 @@ public class MenuItemApi {
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Item excluído", content = @Content),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
     })
     public ResponseEntity<MenuItemOutputDto> deleteMenuItem(
             @PathVariable UUID id,

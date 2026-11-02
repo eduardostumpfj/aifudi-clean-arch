@@ -41,7 +41,7 @@ class SubRoleFlowTest {
             assertThrows(NotAllowedException.class, () -> new AssignSubRoleToUserUseCase(memberships, subroles, restaurants, users, permission)
                     .assignSubRoleToUser(actor, new MembershipInputDto(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID())));
         }
-        verifyNoInteractions(subroles, roles, restaurants, memberships);
+        verifyNoInteractions(subroles, roles, restaurants);
     }
 
     @Test

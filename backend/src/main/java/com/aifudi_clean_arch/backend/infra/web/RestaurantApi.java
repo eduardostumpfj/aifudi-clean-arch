@@ -8,11 +8,9 @@ import com.aifudi_clean_arch.backend.infra.web.json.CreateRestaurantJson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ProblemDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +21,11 @@ import java.util.UUID;
 @Tag(name = "Restaurantes", description = "Cadastro e gestão de restaurantes.")
 @ApiResponses({
         @ApiResponse(responseCode = "401", description = "Credenciais ausentes ou inválidas",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "403", description = "Operação não permitida",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "500", description = "Erro interno",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
 })
 @RestController
 @RequestMapping("v1/restaurants")
@@ -39,13 +37,13 @@ public class RestaurantApi {
     @PostMapping("/register")
     @Operation(summary = "Cadastrar restaurante", description = "Cria o restaurante e o vínculo mainOwner do proprietário. Requer ADMIN ou OWNER.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Restaurante cadastrado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "200", description = "Restaurante cadastrado", content = @Content),
         @ApiResponse(responseCode = "400", description = "Corpo ou parâmetros inválidos",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
     })
     public ResponseEntity<CreateRestaurantOutputDto> createRestaurant(
             @Parameter(hidden = true)
@@ -61,13 +59,13 @@ public class RestaurantApi {
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar restaurante", description = "Atualiza os campos informados. Requer ADMIN ou vínculo de proprietário no restaurante.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Restaurante atualizado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "200", description = "Restaurante atualizado", content = @Content),
         @ApiResponse(responseCode = "400", description = "Corpo ou parâmetros inválidos",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
     })
     public ResponseEntity<UpdateRestaurantOutputDto> updateRestaurant(
             @PathVariable UUID id,
@@ -85,9 +83,9 @@ public class RestaurantApi {
     @GetMapping("/{id}")
     @Operation(summary = "Consultar restaurante", description = "Retorna o restaurante e os IDs dos seus vínculos e itens do cardápio.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Restaurante encontrado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "200", description = "Restaurante encontrado", content = @Content),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
     })
     public ResponseEntity<GetRestaurantOutputDto> getRestaurant(
             @PathVariable UUID id,
@@ -100,13 +98,13 @@ public class RestaurantApi {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Excluir restaurante", description = "Requer ADMIN ou vínculo de proprietário. Dependências existentes impedem a exclusão.")
+    @Operation(summary = "Excluir restaurante", description = "Requer ADMIN ou vínculo de proprietário. Remove os vínculos do restaurante na mesma transação. Itens de cardápio existentes impedem a exclusão e preservam os vínculos.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Restaurante excluído", content = @Content),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+                    content = @Content),
         @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
-                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+                    content = @Content)
     })
     public ResponseEntity<Void> deleteRestaurant(
             @PathVariable UUID id,

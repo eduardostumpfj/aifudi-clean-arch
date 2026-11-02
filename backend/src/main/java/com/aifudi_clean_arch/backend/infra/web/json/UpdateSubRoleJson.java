@@ -14,6 +14,6 @@ public record UpdateSubRoleJson(
         @Size(max = 50)
         String label,
 
-        @Schema(description = "Subrole roleId", example = "123e4567-e89b-12d3-a456-426614174000", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        @Schema(description = "Subrole roleId", example = "00000000-0000-4000-8000-000000000002", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
         UUID roleId
 ) {}

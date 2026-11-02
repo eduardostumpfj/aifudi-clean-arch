@@ -27,6 +27,22 @@ public class RestaurantPermissionChecker {
         }
     }
 
+    public boolean checkAssignSubRole(UUID userId, UUID restaurantId) {
+        var user = getUser(userId);
+        if ("ADMIN".equals(user.getClientSubrole().getRole().getValue())) {
+            return true;
+        }
+        if (restaurantId == null) {
+            throw new NotAllowedException();
+        }
+        var membership = membershipGateway.getUserRestaurantMembership(userId, restaurantId)
+                .orElseThrow(NotAllowedException::new);
+        if (!membership.getSubrole().isMainOwner()) {
+            throw new NotAllowedException();
+        }
+        return false;
+    }
+
     public void checkManageRestaurant(UUID userId, UUID restaurantId) {
         var user = getUser(userId);
         if ("ADMIN".equals(user.getClientSubrole().getRole().getValue())) {

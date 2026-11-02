@@ -98,7 +98,11 @@ os vínculos existentes para o mesmo usuário e restaurante.
 
 `users.client_subrole_id` é obrigatório: identifica o papel global do usuário
 (inclusive ADMIN). Memberships identificam o papel dentro de cada restaurante.
-As permissões voltaram à implementação anterior à separação dos checkers.
+O assign de subroles permite ADMIN em qualquer restaurante e mainOwner somente
+no próprio restaurante. mainOwner não pode atribuir nem substituir vínculos
+ADMIN/mainOwner, incluindo o próprio vínculo. ADMIN pode realizar essas
+atribuições e substituições. O perfil global do usuário não é alterado;
+o CRUD de subroles continua exclusivo de ADMIN.
 
 ## Organização dos testes
 
@@ -217,5 +221,8 @@ alteram dados no banco ao qual a aplicação estiver conectada.
 
 A configuração segue o padrão do projeto aifudi de referência, usando Springdoc
 3.1.1 para este projeto com Spring Boot 4.1 e o esquema `basicAuth`.
+Os corpos de requisição exibem exemplos JSON com IDs do seed. As respostas
+mostram código e descrição, sem modelos genéricos; a lista de schemas no rodapé
+fica oculta. Isso altera somente a documentação, não os corpos retornados pela API.
 `OpenApiIT` verifica a geração do documento, autenticação documentada, principais
 endpoints e acesso à interface e sua configuração local.

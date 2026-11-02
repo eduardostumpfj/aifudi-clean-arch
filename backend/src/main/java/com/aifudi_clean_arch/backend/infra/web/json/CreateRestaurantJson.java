@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Schema(title = "Create Restaurant Schema")
 public record CreateRestaurantJson(
-        @Schema(description = "Owner identifier", example = "123e4567-e89b-12d3-a456-426614174000", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Owner identifier", example = "00000000-0000-4000-8000-000000000102", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull
         UUID ownerId,
 
@@ -25,7 +25,7 @@ public record CreateRestaurantJson(
         @Size(max = 255, message = "The field must be 255 characters or less")
         String openingTime,
 
-        @Schema(description = "Kitchen identifier", example = "123e4567-e89b-12d3-a456-426614174000", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Kitchen identifier", example = "00000000-0000-4000-8000-000000000203", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull
         UUID kitchenId
 ) {

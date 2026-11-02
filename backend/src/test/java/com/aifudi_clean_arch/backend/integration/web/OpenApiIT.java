@@ -25,12 +25,37 @@ class OpenApiIT extends ApiIntegrationTest {
     }
 
     @Test
+    void documentsResponsesWithoutGenericBodiesAndKeepsRequestExamples() {
+        var docs = request().when().get("/v3/api-docs")
+                .then().statusCode(200).extract().jsonPath();
+        java.util.Map<String, java.util.Map<String, Object>> paths = docs.getMap("paths");
+        paths.values().forEach(operations -> operations.values().forEach(value -> {
+            var operation = (java.util.Map<?, ?>) value;
+            var responses = (java.util.Map<?, ?>) operation.get("responses");
+            responses.values().forEach(response -> {
+                var documented = (java.util.Map<?, ?>) response;
+                org.junit.jupiter.api.Assertions.assertFalse(documented.containsKey("content"),
+                        "Responses should display only status and description");
+                org.junit.jupiter.api.Assertions.assertNotNull(documented.get("description"));
+            });
+        }));
+        org.junit.jupiter.api.Assertions.assertEquals("00000000-0000-4000-8000-000000000301",
+                docs.getString("components.schemas.CreateMenuItemJson.properties.restaurantId.example"));
+        org.junit.jupiter.api.Assertions.assertEquals("00000000-0000-4000-8000-000000000104",
+                docs.getString("components.schemas.AssignSubRoleJson.properties.userId.example"));
+        org.junit.jupiter.api.Assertions.assertNotNull(docs.getString(
+                "paths.'/v1/menuitems'.post.requestBody.content.'application/json'.schema.'$ref'"));
+    }
+
+    @Test
     void servesSwaggerUiAndItsLocalConfiguration() {
         request().when().get("/swagger-ui/index.html")
                 .then().log().ifValidationFails().statusCode(200)
                 .contentType(ContentType.HTML).body(containsString("Swagger UI"));
         request().when().get("/v3/api-docs/swagger-config")
                 .then().log().ifValidationFails().statusCode(200)
-                .body("url", equalTo("/v3/api-docs"));
+                .body("url", equalTo("/v3/api-docs"))
+                .body("defaultModelsExpandDepth.toString()", equalTo("-1"))
+                .body("defaultModelRendering", equalTo("example"));
     }
 }
