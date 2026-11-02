@@ -199,3 +199,23 @@ valores duplicados, proteção de `mainOwner`, conflitos de exclusão, criação
 reatribuição de memberships com preservação do ID, dependências ausentes e
 validações. Os cenários limpam somente os subroles e restaurantes criados pelo
 próprio teste, sem alterar os perfis globais dos usuários iniciais.
+
+## Swagger / OpenAPI
+
+Com o banco e o backend em execução, acesse:
+
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- Documento OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+Se mudar `server.port`, ajuste a porta desses endereços. A documentação é
+organizada em Restaurantes, Cardápio e Subroles, com campos, respostas e regras
+de acesso. Clique em **Authorize**, informe o login e a senha de um usuário do
+banco e use **Try it out** para chamar os endpoints. A autenticação é HTTP Basic;
+não é necessário preencher o cabeçalho Authorization manualmente. As permissões
+continuam sendo verificadas pela aplicação. As chamadas pelo Swagger gravam e
+alteram dados no banco ao qual a aplicação estiver conectada.
+
+A configuração segue o padrão do projeto aifudi de referência, usando Springdoc
+3.1.1 para este projeto com Spring Boot 4.1 e o esquema `basicAuth`.
+`OpenApiIT` verifica a geração do documento, autenticação documentada, principais
+endpoints e acesso à interface e sua configuração local.

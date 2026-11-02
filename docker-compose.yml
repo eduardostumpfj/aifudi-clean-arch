@@ -24,5 +24,14 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    build: ./backend
+    depends_on:
+      - ${POSTGRES_HOST}
+    env_file:
+      - .env
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+
 volumes:
   pgdata:

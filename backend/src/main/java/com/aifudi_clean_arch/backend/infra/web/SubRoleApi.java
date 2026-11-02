@@ -5,6 +5,14 @@ import com.aifudi_clean_arch.backend.core.dto.subRole.*;
 import com.aifudi_clean_arch.backend.core.dto.membership.*;
 import com.aifudi_clean_arch.backend.infra.security.BasicHeaderAuthenticator;
 import com.aifudi_clean_arch.backend.infra.web.json.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ProblemDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +21,15 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+@Tag(name = "Subroles", description = "Gestão de subroles e atribuição de vínculos. Acesso exclusivo de ADMIN.")
+@ApiResponses({
+        @ApiResponse(responseCode = "401", description = "Credenciais ausentes ou inválidas",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "403", description = "Operação não permitida",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "500", description = "Erro interno",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+})
 @RestController
 @RequestMapping("v1/subroles")
 @RequiredArgsConstructor
@@ -21,7 +38,18 @@ public class SubRoleApi {
     private final BasicHeaderAuthenticator authenticator;
 
     @PostMapping
+    @Operation(summary = "Cadastrar subrole", description = "Cria um subrole associado a um papel. O valor mainOwner é reservado.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Subrole cadastrado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "Corpo ou parâmetros inválidos",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     public ResponseEntity<SubRoleOutputDto> createSubRole(
+            @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authHeader,
             @Valid @RequestBody CreateSubRoleJson input) {
         var userId = authenticator.authenticate(authHeader);
@@ -31,16 +59,34 @@ public class SubRoleApi {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Consultar subrole", description = "Consulta um subrole pelo seu ID. Requer ADMIN.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Subrole encontrado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     public ResponseEntity<SubRoleOutputDto> getSubRole(
             @PathVariable UUID id,
+            @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         var userId = authenticator.authenticate(authHeader);
         return ResponseEntity.ok(subRoleController.getSubRole(userId, id));
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualizar subrole", description = "Atualiza apenas os campos informados. O proprietário principal é protegido.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Subrole atualizado", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "Corpo ou parâmetros inválidos",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     public ResponseEntity<SubRoleOutputDto> updateSubRole(
             @PathVariable UUID id,
+            @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authHeader,
             @Valid @RequestBody UpdateSubRoleJson input) {
         var userId = authenticator.authenticate(authHeader);
@@ -50,8 +96,17 @@ public class SubRoleApi {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Excluir subrole", description = "Subroles protegidos ou ainda referenciados não podem ser excluídos.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Subrole excluído", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     public ResponseEntity<Void> deleteSubRole(
             @PathVariable UUID id,
+            @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         var userId = authenticator.authenticate(authHeader);
         subRoleController.deleteSubRole(userId, id);
@@ -59,7 +114,18 @@ public class SubRoleApi {
     }
 
     @PostMapping("/assign")
+    @Operation(summary = "Atribuir subrole a usuário", description = "Cria ou atualiza um membership no restaurante. Preserva o perfil global do usuário e protege mainOwner.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Subrole atribuído", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "Corpo ou parâmetros inválidos",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "409", description = "Conflito com dados existentes ou recursos relacionados",
+                    content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     public ResponseEntity<MembershipOutputDto> assignSubRole(
+            @Parameter(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authHeader,
             @Valid @RequestBody AssignSubRoleJson input) {
         var userId = authenticator.authenticate(authHeader);
